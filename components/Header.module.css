@@ -1,0 +1,28 @@
+.container{
+    background: rgb(130,48,2);
+    background: linear-gradient(180deg, rgba(130,48,2,1) 0%, rgba(130,48,2,1) 31%, rgba(130,48,2,0.017542051000087544) 100%);
+    width: 100%;
+    height: 10rem;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title{
+    display: flex;
+}
+.title1{
+    font-size: 2rem;
+    color: #FACE8B;
+}
+
+.title2{
+    font-size: 2rem;
+    padding-top: 1rem;
+    color: #C8C8C8;
+}
+
+.loginContainer{
+    color: #FACE8B;
+    cursor: pointer;
+}
