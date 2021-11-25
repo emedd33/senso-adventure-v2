@@ -9,7 +9,7 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <HeaderComponent />
-      <SideBarComponent />
+      <SideBarComponent placeMent="left" />
       <div></div>
     </div>
   );

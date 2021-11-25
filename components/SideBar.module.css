@@ -7,9 +7,11 @@
     position: fixed;
     top: 0;
 }
+
 .leftContainer{
     left:0
 }
+
 .rightContainer{
     right: 0
 }
