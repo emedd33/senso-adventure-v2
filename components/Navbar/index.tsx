@@ -1,7 +1,7 @@
 import React from "react";
-import styles from "./Header.module.css";
-type HeaderComponentType = {};
-const HeaderComponent: React.FC<HeaderComponentType> = ({}) => {
+import styles from "./style.module.css";
+type NavbarProp = {};
+const Navbar: React.FC<NavbarProp> = ({}) => {
   return (
     <div className={styles.container}>
       <a className={styles.title} href="/">
@@ -15,4 +15,4 @@ const HeaderComponent: React.FC<HeaderComponentType> = ({}) => {
   );
 };
 
-export default HeaderComponent;
+export default Navbar;

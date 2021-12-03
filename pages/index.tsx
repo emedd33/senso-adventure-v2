@@ -1,17 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import HeaderComponent from "../components/Header";
-import SideBarComponent from "../components/SideBar";
-import styles from "../styles/Home.module.css";
 
+import BackgroundLayout from "../components/BackgroundLayout"
 const Home: NextPage = () => {
   return (
-    <div className={styles.container}>
-      <HeaderComponent />
-      <SideBarComponent placeMent="left" />
-      <div></div>
-    </div>
+    <BackgroundLayout>
+          <h2>hei</h2>
+        </BackgroundLayout>
   );
 };
 
