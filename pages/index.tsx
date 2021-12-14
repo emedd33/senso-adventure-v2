@@ -3,11 +3,19 @@ import Head from "next/head";
 import Image from "next/image";
 
 import BackgroundLayout from "../components/BackgroundLayout"
+import ContentContainer from "../components/ContentContainer";
 const Home: NextPage = () => {
   return (
-    <BackgroundLayout>
+    <>
+      <Head>
+        <title>Senso adventure</title>
+      </Head>
+      <BackgroundLayout>
+        <ContentContainer>
           <h2>hei</h2>
-        </BackgroundLayout>
+        </ContentContainer>
+      </BackgroundLayout>
+    </>
   );
 };
 

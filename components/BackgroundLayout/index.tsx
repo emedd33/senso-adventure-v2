@@ -3,18 +3,17 @@ import Footer from "../Footer";
 import Navbar from "../Navbar";
 import styles from "./style.module.css";
 type BackgroundComponentProp = {
-    content: any
+    children: any,
+    backgroundImageUrl?: string,
 };
-const BackgroundLayout: React.FC<BackgroundComponentProp> = ({content}) => {
+const BackgroundLayout: React.FC<BackgroundComponentProp> = ({children, backgroundImageUrl}) => {
     return (
       <>
-        <div className={styles.container}>
+        <div className={styles.container} style={{backgroundImage: `url(${backgroundImageUrl? backgroundImageUrl: '/background-home.jpg'})`}}>
             < Navbar/>
-            {content}  
-            <p style={{height: '40rem'}}>asdmlaksdmlam sdlkansdla sldk asldka sdn asdm a</p> 
-            <p>asdmlaksdmlam sdlkansdla sldk asldka sdn asdm a</p> 
-            <p>asdmlaksdmlam sdlkansdla sldk asldka sdn asdm a</p> 
-            <p>asdmlaksdmlam sdlkansdla sldk asldka sdn asdm a</p> 
+            <div className={styles.contentContainer}>
+                {children}  
+            </div>
             <div className={styles.rightSideDrop}></div>
             <div className={styles.leftSideDrop}></div>
         </div>

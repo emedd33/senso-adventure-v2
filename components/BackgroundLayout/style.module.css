@@ -1,10 +1,17 @@
 .container{
-    background-image: url("/background-home.jpg");
+    
     background-repeat: no-repeat;
     background-attachment: fixed;
     width: 100%;
     min-height: 100%;
     padding: 10rem 1rem 1rem;
+  }
+
+  .contentContainer{
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
 .leftSideDrop {
@@ -15,8 +22,10 @@
   left: 0;
   width: 20rem;
   height: 100%;
+  z-index: -1;
 }
 .rightSideDrop {
+  z-index: -1;
   position: fixed;
   background: rgb(0,0,0);
   background: linear-gradient(270deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%);
