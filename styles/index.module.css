@@ -1,0 +1,21 @@
+.container{
+ display: grid;
+ grid-template-columns: repeat( auto-fit, minmax(20rem, 1fr) );
+ gap: 1rem;
+ justify-items: center;
+}
+
+.campaignContainer{
+  height: 20rem;
+  width: 20rem;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.campaignImage{
+  width: 100%;
+  height: 100%;
+}
+

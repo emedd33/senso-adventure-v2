@@ -2,5 +2,7 @@
     width: 95%;
     min-height: 200vh;
     background-color: #E0C9A6;
-    padding: 1rem
+    padding: 1rem;
+    overflow: auto;
+
 }
