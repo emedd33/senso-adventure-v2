@@ -1,24 +1,35 @@
-name: Build and Deploy
+name: "Deploy"
+
 on:
+  release:
+    types:
+      - published
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  vercel:
     runs-on: ubuntu-latest
-    steps:
-      - run: echo "🎉 The job was automatically triggered and my secret is... ${{ secrets.MY_SECRET }} ."
-      - uses: actions/checkout@v2
-      - run: npx vercel --token ${VERCEL_TOKEN}
-      env:
-        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      # - uses: actions/setup-node@v1
-      #   with:
-      #     node-version: "14"
-      #     registry-url: https://registry.npmjs.org/
+    name: "Deploy front-end"
 
-      # - name: "Deploy to Vercel"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+          registry-url: https://registry.npmjs.org/
+
+      - name: "Deploy to Vercel"
+        run: |
+          prodRun=""
+          if [[ ${GITHUB_REF} == "refs/heads/main" ]]; then
+            prodRun="--prod"
+          fi
+
+          npx vercel --token ${VERCEL_TOKEN} $prodRun
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
