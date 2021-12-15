@@ -9,7 +9,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🎉 The job was automatically triggered and my secret is... ${{ secrets.MY_SECRET }} ."
       - uses: actions/checkout@v2
       # - uses: actions/setup-node@v1
       #   with:
