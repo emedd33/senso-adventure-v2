@@ -1,20 +1,25 @@
 
+import lmof from "./images/lmop.png" 
 export type Campaign = {
     id: string,
     title: string,
-    image: string
+    image: any,
+    sessions: {id: string,title: string}[]
 }
 
 const Campain_1:Campaign = {
     id: "campaign_1",
     title: "Campaign 1",
-    image: "https://dmdavid.com/wp-content/uploads/2019/06/Lost_Mine_of_Phandelver_cover.jpg"
+    image: "/images/lmop.jpg",
+    sessions: [{id: "session_1",title:"session 1"}, {id: "session_2",title:"session 2"}]
 }
 
 const Campain_2: Campaign = {
     id: "campaign_2",
     title: "Campagn 2",
-    image: ""
+    image: "",
+    sessions: [{id: "session_1",title:"session 1"}]
+
 }
 
 const content: Campaign[] = [

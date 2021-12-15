@@ -1,16 +1,23 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import {Image} from "antd"
+import Image from 'next/image'
 import styles from "../styles/index.module.css"
 import BackgroundLayout from "../components/BackgroundLayout"
 import ContentContainer from "../components/ContentContainer";
 import content, { Campaign } from "../assets/campaints"
 import { Button } from "antd";
+import { useRouter } from "next/router";
+const myLoader:React.FC<{}> = () => {
+  return <p>loading</p>
+}
 const Home: NextPage = () => {
-
-  const handleClick = (campaign:Campaign)=>{
-    console.log(campaign);
-    
+  const router = useRouter()
+  
+  const routeToCampaign = (campaign:Campaign)=>{
+    router.push({
+      pathname: `campaign/${campaign.id}`,
+      query: { title: campaign.title, sessions: campaign.sessions.map((session)=>session.id) }
+    })
   }
   return (
     <>
@@ -23,9 +30,14 @@ const Home: NextPage = () => {
             
             {content.map((campaign: Campaign)=>{
             return (
-              <div key={campaign.id} className={styles.campaignContainer}>
+              <div key={campaign.id} className={styles.campaignContainer} onClick={() => routeToCampaign(campaign)}>
                 {campaign.image?
-                <h1>{campaign.title}</h1>
+                 <Image
+                 src={campaign.image}
+                 alt="Picture of the author"
+                 layout="fill"
+                 objectFit="cover"
+               />
                   :<h1>{campaign.title}</h1>
                   }
                 </div>
