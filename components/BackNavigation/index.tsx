@@ -7,7 +7,7 @@ const BackNavigation: React.FC<BackNavigationProp> = ({ href }) => {
     <Link href={href}>
       <a className={style.container}>
         <KeyboardBackspaceIcon />
-        back
+        <span>back</span>
       </a>
     </Link>
   );
