@@ -1,39 +1,44 @@
-.container{
-    background: rgb(130,48,2);
-    background: linear-gradient(180deg, rgba(130,48,2,1) 0%, rgba(130,48,2,1) 80%, rgba(130,48,2,0.017542051000087544) 100%);
-    width: 100%;
-    height: 6rem;
-    padding: 1rem;
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    justify-content: space-between;
+.container {
+  background: rgb(130, 48, 2);
+  background: linear-gradient(
+    180deg,
+    rgba(130, 48, 2, 1) 0%,
+    rgba(130, 48, 2, 1) 80%,
+    rgba(130, 48, 2, 0.017542051000087544) 100%
+  );
+  width: 100%;
+  height: 6rem;
+  padding: 1rem;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  justify-content: space-between;
 }
 
-.title{
-    display: flex;
+.title {
+  display: flex;
 }
-.title1{
-    font-size: 2rem;
-    color: #FACE8B;
-}
-
-.title2{
-    font-size: 2rem;
-    padding-top: 1rem;
-    color: #C8C8C8;
+.title1 {
+  font-size: 2rem;
+  color: #face8b;
 }
 
-.loginContainer{
-    color: #FACE8B;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 0;
-    display: flex;
-    align-items: flex-start;
+.title2 {
+  font-size: 2rem;
+  padding-top: 1rem;
+  color: #c8c8c8;
 }
-.loginTitle{
-    margin: 0;
+
+.loginContainer {
+  color: #face8b;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 0;
+  display: flex;
+  align-items: flex-start;
+}
+.loginTitle {
+  margin: 0;
 }

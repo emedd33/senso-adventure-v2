@@ -1,12 +1,12 @@
-.container{
- display: grid;
- grid-template-columns: repeat( auto-fit, minmax(20rem, 1fr) );
- gap: 1rem;
- justify-items: center;
- z-index: 0;
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1rem;
+  justify-items: center;
+  z-index: 0;
 }
 
-.campaignContainer{
+.campaignContainer {
   position: relative;
   height: 20rem;
   width: 20rem;
@@ -16,7 +16,7 @@
   align-items: center;
   cursor: pointer;
 }
-.campaignContainer:hover{
+.campaignContainer:hover {
   opacity: 0.7;
 }
 .campaignContainer:active {
@@ -26,8 +26,7 @@
   /* Lowering the shadow */
 }
 
-.campaignImage{
+.campaignImage {
   width: 100%;
   height: 100%;
 }
-

@@ -1,20 +1,18 @@
-.container{
-    
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    width: 100%;
-    min-height: 100%;
-    padding: 10rem 1rem 1rem;
-    -webkit-box-shadow: inset 0px 0px 129px 96px rgba(0,0,0,0.75);
--moz-box-shadow: inset 0px 0px 129px 96px rgba(0,0,0,0.75);
-box-shadow: inset 0px 0px 129px 96px rgba(0,0,0,0.75);
-  }
+.container {
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  width: 100%;
+  min-height: 100%;
+  padding: 10rem 1rem 1rem;
+  -webkit-box-shadow: inset 0px 0px 129px 96px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: inset 0px 0px 129px 96px rgba(0, 0, 0, 0.75);
+  box-shadow: inset 0px 0px 129px 96px rgba(0, 0, 0, 0.75);
+}
 
-  .contentContainer{
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
+.contentContainer {
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}

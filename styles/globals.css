@@ -1,16 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Unkempt&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Unkempt&display=swap");
 
 html,
 body {
   padding: 0;
   margin: 0;
   height: 100vh;
-  font-family: unkempt, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  
+  font-family: unkempt, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
-#__next{
-  height:100%
+#__next {
+  height: 100%;
 }
 a {
   color: inherit;
@@ -21,7 +20,7 @@ a {
   box-sizing: border-box;
 }
 @media only screen and (max-width: 600px) {
-  html{
+  html {
     font-size: 13px;
   }
 }
