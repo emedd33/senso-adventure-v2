@@ -1,14 +1,14 @@
-name: "Deploy"
-
+name: Build and Deploy
 on:
   push:
     branches:
       - main
-jobs:
-  vercel:
-    runs-on: ubuntu-latest
-    name: "Deploy front-end"
 
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
