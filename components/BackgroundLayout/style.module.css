@@ -6,6 +6,9 @@
     width: 100%;
     min-height: 100%;
     padding: 10rem 1rem 1rem;
+    -webkit-box-shadow: inset 0px 0px 129px 96px rgba(0,0,0,0.75);
+-moz-box-shadow: inset 0px 0px 129px 96px rgba(0,0,0,0.75);
+box-shadow: inset 0px 0px 129px 96px rgba(0,0,0,0.75);
   }
 
   .contentContainer{
@@ -14,25 +17,4 @@
     justify-content: center;
     flex-wrap: wrap;
   }
-
-.leftSideDrop {
-  position: fixed;
-  background: rgb(0,0,0);
-  background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%);
-  top: 5rem;
-  left: 0;
-  width: 20rem;
-  height: 100%;
-  z-index: -1;
-}
-.rightSideDrop {
-  z-index: -1;
-  position: fixed;
-  background: rgb(0,0,0);
-  background: linear-gradient(270deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%);
-  top: 5rem;
-  right: 0;
-  width: 20rem;
-  height: 100%;
-}
 

@@ -9,13 +9,11 @@ type BackgroundComponentProp = {
 const BackgroundLayout: React.FC<BackgroundComponentProp> = ({children, backgroundImageUrl}) => {
     return (
       <>
-        <div className={styles.container} style={{backgroundImage: `url(${backgroundImageUrl? backgroundImageUrl: '/background-home.jpg'})`}}>
+        <div className={styles.container} style={{backgroundImage: `url(${backgroundImageUrl? backgroundImageUrl: '/background-home.jpg'})`, }}>
             < Navbar/>
             <div className={styles.contentContainer}>
                 {children}  
             </div>
-            <div className={styles.rightSideDrop}></div>
-            <div className={styles.leftSideDrop}></div>
         </div>
         <Footer/>
       </>

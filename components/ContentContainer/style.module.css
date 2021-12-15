@@ -1,7 +1,7 @@
 .container{
     width: 95%;
     min-height: 200vh;
-    background-color: #E0C9A6;
+    background-color: transparent;
     padding: 1rem;
     overflow: auto;
 
