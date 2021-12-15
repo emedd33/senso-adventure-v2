@@ -1,14 +1,9 @@
 name: "Deploy"
 
 on:
-  release:
-    types:
-      - published
   push:
     branches:
       - main
-  workflow_dispatch:
-
 jobs:
   vercel:
     runs-on: ubuntu-latest
