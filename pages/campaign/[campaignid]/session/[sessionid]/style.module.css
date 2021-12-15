@@ -1,2 +1,18 @@
 .container {
+  background-color: #face8b;
+  padding: 1rem;
+}
+
+.backLink {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.title {
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
 }

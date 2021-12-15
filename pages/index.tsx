@@ -5,7 +5,6 @@ import styles from "../styles/index.module.css";
 import BackgroundLayout from "../components/BackgroundLayout";
 import ContentContainer from "../components/ContentContainer";
 import content, { Campaign } from "../assets/campaints";
-import { Button } from "antd";
 import { useRouter } from "next/router";
 import Link from "next/link";
 const myLoader: React.FC<{}> = () => {
