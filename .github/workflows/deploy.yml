@@ -11,14 +11,14 @@ jobs:
     steps:
       - run: echo "🎉 The job was automatically triggered and my secret is... ${{ secrets.MY_SECRET }} ."
       - uses: actions/checkout@v2
+      - run: npx vercel --token ${VERCEL_TOKEN}
+      - env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       # - uses: actions/setup-node@v1
       #   with:
       #     node-version: "14"
       #     registry-url: https://registry.npmjs.org/
 
       # - name: "Deploy to Vercel"
-      #   run: echonpx vercel --token ${VERCEL_TOKEN}
-      #   env:
-      #     VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      #     VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
