@@ -1,13 +1,11 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import styles from "./style.module.css";
-import Link from "next/link";
 import content, { Campaign } from "../../../../../assets/campaints";
 import BackgroundLayout from "../../../../../components/BackgroundLayout";
 import ContentContainer from "../../../../../components/ContentContainer";
 import styled from "./style.module.css";
 import Custom404 from "../../../../404";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { text } from "../../../../../assets/loremIpsum";
 import BackNavigation from "../../../../../components/BackNavigation";
 const CampaignPage = () => {
