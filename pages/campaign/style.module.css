@@ -1,2 +1,27 @@
-.container {
+.sessionContainer {
+  background-color: #face8b;
+  width: 100%;
+  min-height: 10rem;
+  opacity: 0.9;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  cursor: pointer;
+}
+.sessionContainer:active {
+}
+
+.sessionContainer:hover {
+  opacity: 1;
+}
+.sessionContainer:active {
+  transform: scale(1.01);
+  /* Scaling button to 0.98 to its original size */
+  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+  /* Lowering the shadow */
+}
+.title {
+  width: 100%;
+  text-align: center;
 }

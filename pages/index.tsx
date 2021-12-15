@@ -7,21 +7,13 @@ import ContentContainer from "../components/ContentContainer";
 import content, { Campaign } from "../assets/campaints";
 import { Button } from "antd";
 import { useRouter } from "next/router";
+import Link from "next/link";
 const myLoader: React.FC<{}> = () => {
   return <p>loading</p>;
 };
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const routeToCampaign = (campaign: Campaign) => {
-    router.push({
-      pathname: `campaign/${campaign.id}`,
-      query: {
-        title: campaign.title,
-        sessions: campaign.sessions.map((session) => session.id),
-      },
-    });
-  };
   return (
     <>
       <Head>
@@ -32,22 +24,19 @@ const Home: NextPage = () => {
           <div className={styles.container}>
             {content.map((campaign: Campaign) => {
               return (
-                <div
-                  key={campaign.id}
-                  className={styles.campaignContainer}
-                  onClick={() => routeToCampaign(campaign)}
-                >
-                  {campaign.image ? (
-                    <Image
-                      src={campaign.image}
-                      alt="Picture of the author"
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                  ) : (
-                    <h1>{campaign.title}</h1>
-                  )}
-                </div>
+                <Link key={campaign.id} href={`/campaign/${campaign.id}`}>
+                  <a key={campaign.id} className={styles.campaignContainer}>
+                    {campaign.image ? (
+                      <Image
+                        src={campaign.image}
+                        alt="Picture of the author"
+                        layout="fill"
+                        objectFit="cover"
+                      />
+                    ) : null}
+                    <h1 className={styles.campaignTitle}>{campaign.title}</h1>
+                  </a>
+                </Link>
               );
             })}
           </div>

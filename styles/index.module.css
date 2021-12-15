@@ -15,9 +15,10 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  opacity: 0.9;
 }
 .campaignContainer:hover {
-  opacity: 0.7;
+  opacity: 1;
 }
 .campaignContainer:active {
   transform: scale(0.98);
@@ -29,4 +30,10 @@
 .campaignImage {
   width: 100%;
   height: 100%;
+}
+
+.campaignTitle {
+  z-index: 1;
+  background-color: rgb(255, 255, 255, 0.5);
+  padding: 1rem;
 }
