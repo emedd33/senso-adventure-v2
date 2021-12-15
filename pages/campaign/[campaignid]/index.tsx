@@ -1,26 +1,30 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import BackgroundLayout from "../../components/BackgroundLayout";
-import ContentContainer from "../../components/ContentContainer";
+import BackgroundLayout from "../../../components/BackgroundLayout";
+import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
-import content, { Session } from "../../assets/campaints";
-import { text } from "../../assets/loremIpsum";
+import content, { Session } from "../../../assets/campaints";
+import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
+import Custom404 from "../../404";
 
 const CampaignPage = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { campaignid } = router.query;
 
   // TODO: switch to backend api
-  const campaign = content.find((e) => e.id === id);
+  const campaign = content.find((e) => e.id === campaignid);
 
   const getTextSnippet = (text: string, start: number = 0, end?: number) => {
     return text.substring(start, end ? end : text.length);
   };
+  if (!campaign) {
+    return <Custom404 />;
+  }
   return (
     <>
       <Head>
-        <title>{id}</title>
+        <title>{campaign?.title}</title>
       </Head>
       <BackgroundLayout backgroundImageUrl={campaign?.image}>
         <ContentContainer>
