@@ -7,10 +7,11 @@
     rgba(130, 48, 2, 0.017542051000087544) 100%
   );
   width: 100%;
-  height: 6rem;
+  height: 7rem;
   padding: 1rem;
   display: flex;
   position: fixed;
+  flex-wrap: wrap;
   top: 0;
   left: 0;
   z-index: 100;
@@ -21,12 +22,12 @@
   display: flex;
 }
 .title1 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #face8b;
 }
 
 .title2 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   padding-top: 1rem;
   color: #c8c8c8;
 }
@@ -34,7 +35,7 @@
 .loginContainer {
   color: #face8b;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.8rem;
   margin-top: 0;
   display: flex;
   align-items: flex-start;

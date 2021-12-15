@@ -9,8 +9,6 @@
   flex-wrap: wrap;
   cursor: pointer;
 }
-.sessionContainer:active {
-}
 
 .sessionContainer:hover {
   opacity: 1;

@@ -10,7 +10,7 @@ export default function Custom404() {
         <title>Senso Adventure</title>
       </Head>
       <BackgroundLayout>
-        <ContentContainer>
+        <ContentContainer style={{ backgroundColor: "#face8b" }}>
           <h1>Could not find the page</h1>
         </ContentContainer>
       </BackgroundLayout>

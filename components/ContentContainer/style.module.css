@@ -1,6 +1,5 @@
 .container {
   width: 95%;
-  min-height: 200vh;
   background-color: transparent;
   padding: 1rem;
   overflow: auto;
