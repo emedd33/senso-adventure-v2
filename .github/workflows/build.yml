@@ -6,29 +6,15 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          version: 12.x
       - run: npm ci
-  build:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: "Build application"
-        run: npm run build
-  # test:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: ./test_server.sh
-  #   Build:
-  #     name: "Build"
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #       - uses: actions/checkout@v2
-  #       - run: npm ci && npm run build
-  #   Test:
-  #     name: "Test"
-  #     runs-on: ubuntu-latest
-  #       steps:
-  #         - uses: actions/checkout@v2
-  #         - run: npm ci && npm run build
+      - run: npm run build
