@@ -4,17 +4,29 @@ on:
     branches:
       - main
 jobs:
-  Build:
+  setup:
     runs-on: ubuntu-latest
-    outputs:
-      output1: ${{ steps.step1.outputs.test }}
     steps:
-      - uses: actions/checkout@v2
-      - id: step1
       - run: npm ci && npm run build
-  Echo:
-    needs: Build
+  build:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: echo ${{output1}}
+      - run: echo herere
+  # test:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: ./test_server.sh
+  #   Build:
+  #     name: "Build"
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - uses: actions/checkout@v2
+  #       - run: npm ci && npm run build
+  #   Test:
+  #     name: "Test"
+  #     runs-on: ubuntu-latest
+  #       steps:
+  #         - uses: actions/checkout@v2
+  #         - run: npm ci && npm run build
