@@ -13,11 +13,11 @@ jobs:
     steps:
       - id: step1
         run: npm ci && npm run build
-  build:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      run: echo ${{build-status}}
+  # build:
+  #   needs: setup
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     run: echo ${{build-status}}
   # test:
   #   needs: build
   #   runs-on: ubuntu-latest
