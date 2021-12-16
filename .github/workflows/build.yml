@@ -7,12 +7,12 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      run: npm run build
+      - run: npm run build
   build:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      run: npm ci
+      - run: npm ci
   # test:
   #   needs: build
   #   runs-on: ubuntu-latest
