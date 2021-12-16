@@ -1,7 +1,22 @@
 on:
   workflow_dispatch:
 jobs:
+  build:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          version: 12.x
+      - run: npm ci
+      - run: npm run build
   vercel:
+    needs: build
     runs-on: ubuntu-latest
     name: "Deploy front-end"
 
