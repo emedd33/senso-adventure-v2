@@ -24,3 +24,6 @@ a {
     font-size: 13px;
   }
 }
+button {
+  background-color: transparent;
+}

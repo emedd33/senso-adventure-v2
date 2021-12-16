@@ -43,3 +43,11 @@
 .loginTitle {
   margin: 0;
 }
+
+.modalContainer {
+  width: 20rem;
+  height: 10rem;
+  padding: 1rem;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}

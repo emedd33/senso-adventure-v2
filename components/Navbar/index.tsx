@@ -1,10 +1,17 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useCallback } from "react";
+import React, { useState } from "react";
+import GoogleLogin from "react-google-login";
+import Modal from "react-responsive-modal";
+import "react-responsive-modal/styles.css";
 import styles from "./style.module.css";
 type NavbarProp = {};
+
 const Navbar: React.FC<NavbarProp> = ({}) => {
-  const router = useRouter();
+  const [openLoginModal, setOpenLoginModal] = useState(false);
+
+  const responseGoogle = (response: any) => {
+    console.log(response);
+  };
 
   return (
     <>
@@ -18,8 +25,31 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
           </Link>
         </div>
         <div className={styles.loginContainer}>
-          <h1 className={styles.loginTitle}>Login</h1>
+          <h1
+            tabIndex={0}
+            className={styles.loginTitle}
+            onClick={() => setOpenLoginModal(true)}
+          >
+            Login
+          </h1>
         </div>
+        <Modal
+          open={openLoginModal}
+          onClose={() => setOpenLoginModal(false)}
+          center
+        >
+          <div className={styles.modalContainer}>
+            <h2 style={{ textAlign: "center" }}>Login</h2>
+            <GoogleLogin
+              clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+              buttonText="Sign in with Google"
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              cookiePolicy={"single_host_origin"}
+            />
+            ,
+          </div>
+        </Modal>
       </div>
     </>
   );

@@ -9,8 +9,8 @@ export type Campaign = {
 export type Session = { id: string; title: string; subTitle: string };
 
 const Campain_1: Campaign = {
-  id: "campaign_1",
-  title: "Campaign 1",
+  id: "lmop",
+  title: "Lost mines of Phandelver",
   image: "/images/lmop.jpg",
   sessions: [
     { id: "session_1", title: "Session 1", subTitle: "En subtitle 1" },
@@ -19,9 +19,9 @@ const Campain_1: Campaign = {
 };
 
 const Campain_2: Campaign = {
-  id: "campaign_2",
-  title: "Campagn 2",
-  image: "",
+  id: "rotfm",
+  title: "Rime of the frostmaiden",
+  image: "/images/rotfm.jpg",
   sessions: [{ id: "session_1", title: "session 1", subTitle: "En subtitle" }],
 };
 

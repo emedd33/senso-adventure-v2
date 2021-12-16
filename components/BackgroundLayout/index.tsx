@@ -16,7 +16,9 @@ const BackgroundLayout: React.FC<BackgroundComponentProp> = ({
         className={styles.container}
         style={{
           backgroundImage: `url(${
-            backgroundImageUrl ? backgroundImageUrl : "/background-home.jpg"
+            backgroundImageUrl
+              ? backgroundImageUrl
+              : "/images/background-home.jpg"
           })`,
         }}
       >
