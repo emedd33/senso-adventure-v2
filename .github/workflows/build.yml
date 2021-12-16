@@ -12,7 +12,9 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - run: npm run build
+      - uses: actions/checkout@v2
+      - name: "Build application"
+        run: npm run build
   # test:
   #   needs: build
   #   runs-on: ubuntu-latest
