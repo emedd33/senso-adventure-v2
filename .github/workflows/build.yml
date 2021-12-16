@@ -6,13 +6,19 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    outputs:
+      build-status:
+        description: "Build status"
+        value: ${{ steps.step1.outputs}}
     steps:
-      - run: npm ci && npm run build
+      - id: step1
+        uses: actions/checkout@v2
+        run: npm ci && npm run build
   build:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - run: echo herere
+      run: echo ${{build-status}}
   # test:
   #   needs: build
   #   runs-on: ubuntu-latest
