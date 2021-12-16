@@ -1,0 +1,13 @@
+.container {
+  width: 20rem;
+  height: 30rem;
+  padding: 1rem;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
+
+.formContainer {
+  display: grid;
+  grid-template-rows: auto;
+  gap: 1rem;
+}
