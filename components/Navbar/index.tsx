@@ -3,6 +3,7 @@ import {
   useAuthUser,
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import Modal from "react-responsive-modal";
@@ -54,6 +55,7 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
           <div className={styles.modalContainer}>
             <div className={styles.modalHeader}>
               <h2 style={{ textAlign: "center" }}>Senso Adventure</h2>
+              <Image src="/icons/dice.png" width={30} height={30} />
             </div>
             {isRegistering ? (
               <Register

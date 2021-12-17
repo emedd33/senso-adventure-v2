@@ -54,6 +54,9 @@
 }
 .modalHeader {
   padding: 1rem;
+  display: grid;
+  justify-items: center;
+  grid-template-rows: minmax(min-content, max-content);
 }
 .loginTitle {
   margin: 0;

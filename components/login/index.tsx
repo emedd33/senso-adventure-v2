@@ -1,5 +1,10 @@
 import { FirebaseError } from "@firebase/util";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { ChangeEvent, useState } from "react";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
@@ -36,6 +41,24 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
       });
   };
 
+  const loginWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        console.log(result);
+        if (closeModal) {
+          closeModal();
+        }
+
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
+  };
   return (
     <div
       className={style.formContainer}
@@ -94,7 +117,7 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
           <path d="M375 2L0 3.73205V0.267949L375 2Z" fill="#A12A20" />
         </svg>
       </div>
-      <button className={style.googleButton}>
+      <button className={style.googleButton} onClick={loginWithGoogle}>
         <img
           src="/icons/google.svg"
           width={"18px"}
