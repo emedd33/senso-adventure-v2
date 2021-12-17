@@ -10,16 +10,16 @@ import Loader from "react-loader-spinner";
 import style from "./style.module.css";
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-const provider = new GoogleAuthProvider();
-const auth = getAuth();
-type LoginComponentProp = {
+import {
+  dispatchLoginWithEmail,
+  dispatchLoginWithGoogle,
+} from "../../firebase/login";
+
+type LoginProp = {
   closeModal?: () => void;
   setIsRegistering: (value: boolean) => void;
 };
-const LoginComponent: React.FC<LoginComponentProp> = ({
-  closeModal,
-  setIsRegistering,
-}) => {
+const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
@@ -31,36 +31,27 @@ const LoginComponent: React.FC<LoginComponentProp> = ({
     }
     setIsLoading(true);
 
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, loginEmail, loginPassword)
-      .then(() => {
-        if (closeModal) {
+    dispatchLoginWithEmail(loginEmail, loginPassword).then(
+      ({ code, message }) => {
+        if (code === 0 && closeModal) {
           closeModal();
+        } else {
+          setErrorMessage(message);
         }
-      })
-      .catch((error: FirebaseError) => {
-        setErrorMessage(error.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      }
+    );
   };
 
   const loginWithGoogle = () => {
-    // signInWithPopup(auth, provider)
-    //   .then((result) => {
-    //     // This gives you a Google Access Token. You can use it to access the Google API.
-    //     console.log(result);
-    //     if (closeModal) {
-    //       closeModal();
-    //     }
-    //     // ...
-    //   })
-    //   .catch((error) => {
-    //     // Handle Errors here.
-    //     console.log(error);
-    //   });
+    dispatchLoginWithGoogle().then(({ code, message }) => {
+      if (code === 0 && closeModal) {
+        closeModal();
+      } else {
+        setErrorMessage(message);
+      }
+    });
   };
+
   return (
     <div
       className={style.formContainer}
@@ -131,4 +122,4 @@ const LoginComponent: React.FC<LoginComponentProp> = ({
     </div>
   );
 };
-export default LoginComponent;
+export default Login;
