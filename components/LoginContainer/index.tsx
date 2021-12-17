@@ -1,7 +1,7 @@
 import { FirebaseError } from "@firebase/util";
 import {
   getAuth,
-  // GoogleAuthProvider,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
@@ -10,7 +10,8 @@ import Loader from "react-loader-spinner";
 import style from "./style.module.css";
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-
+const provider = new GoogleAuthProvider();
+const auth = getAuth();
 type LoginComponentProp = {
   closeModal?: () => void;
   setIsRegistering: (value: boolean) => void;
@@ -46,8 +47,6 @@ const LoginComponent: React.FC<LoginComponentProp> = ({
   };
 
   const loginWithGoogle = () => {
-    // const provider = new GoogleAuthProvider();
-    // const auth = getAuth();
     // signInWithPopup(auth, provider)
     //   .then((result) => {
     //     // This gives you a Google Access Token. You can use it to access the Google API.
