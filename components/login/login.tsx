@@ -1,10 +1,12 @@
-import { ChangeEvent, useMemo, useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import ContentContainer from "../ContentContainer";
 import style from "./style.module.css";
+
 type LoginProp = {};
 const Login: React.FC<LoginProp> = ({}) => {
   const [isRegistering, setIsRegistering] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword1, setRegisterPassword1] = useState("");
   const [registerPassword2, setRegisterPassword2] = useState("");
@@ -12,11 +14,31 @@ const Login: React.FC<LoginProp> = ({}) => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  const register = async () => {
-    console.log("register");
+  const register = () => {
+    console.log(registerEmail, registerPassword1, registerPassword2);
+
+    if (!registerEmail) {
+      setErrorMessage("Fill out email");
+    }
+    if (!registerPassword1) {
+      setErrorMessage("Fill out password");
+    }
+
+    if (registerPassword2 !== registerPassword1) {
+      setErrorMessage("Passwords are not equal");
+    }
+    // createUserWithEmailAndPassword(firebaseAuth,registerEmail, registerPassword1).then(user=> {
+    //   console.log(user)
+    // }).catch((err)=>{
+    //   console.log(err)
+    // })
+
     return false;
   };
 
+  useEffect(() => {
+    setErrorMessage("");
+  }, [registerPassword2, registerPassword1, registerEmail]);
   const login = async () => {};
 
   const logout = async () => {};
@@ -58,6 +80,7 @@ const Login: React.FC<LoginProp> = ({}) => {
               }
             ></input>
             <button onClick={register}>Register</button>
+            <span>{errorMessage}</span>;
             <svg
               width="100%"
               height="4"
