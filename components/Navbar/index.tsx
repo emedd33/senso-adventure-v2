@@ -8,8 +8,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import Modal from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
-import Register from "../Register";
 import Login from "../Login";
+import Register from "../Register";
 import styles from "./style.module.css";
 type NavbarProp = {};
 

@@ -87,7 +87,7 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
           onClick={() => setIsRegistering(true)}
           className={style.registerBoxText}
         >
-          Don&apos;t have an account?
+          Register new account?
         </button>
         <button className={style.registerBoxText}>Forgotten password?</button>
       </div>
