@@ -2485,10 +2485,10 @@
     "locate-path" "^5.0.0"
     "path-exists" "^4.0.0"
 
-"firebase-admin@^9.0.0 <11":
-  "integrity" "sha512-AtA7OH5RbIFGoc0gZOQgaYC6cdjdhZv4w3XgWoupkPKO1HY+0GzixOuXDa75kFeoVyhIyo4PkLg/GAC1dC1P6w=="
-  "resolved" "https://registry.npmjs.org/firebase-admin/-/firebase-admin-9.12.0.tgz"
-  "version" "9.12.0"
+"firebase-admin@^10.0.1", "firebase-admin@^9.0.0 <11":
+  "integrity" "sha512-p8nrhNJyuAj/Pc3M0TWVU8rd4rPoeCREfRt7dJ+EwkMvFCdJ6Cb21y3ZlN3Qsbok8PEQjuWLNy+C3LQMTfUOcQ=="
+  "resolved" "https://registry.npmjs.org/firebase-admin/-/firebase-admin-10.0.1.tgz"
+  "version" "10.0.1"
   dependencies:
     "@firebase/database-compat" "^0.1.1"
     "@firebase/database-types" "^0.7.2"
