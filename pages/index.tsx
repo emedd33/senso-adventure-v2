@@ -6,9 +6,7 @@ import BackgroundLayout from "../components/BackgroundLayout";
 import ContentContainer from "../components/ContentContainer";
 import content, { Campaign } from "../assets/campaints";
 import Link from "next/link";
-const myLoader: React.FC<{}> = () => {
-  return <p>loading</p>;
-};
+
 const Home: NextPage = () => {
   return (
     <>
@@ -25,9 +23,10 @@ const Home: NextPage = () => {
                     {campaign.image ? (
                       <Image
                         src={campaign.image}
-                        alt="Picture of the author"
+                        alt="Campaign picture"
                         layout="fill"
                         objectFit="cover"
+                        priority={true}
                       />
                     ) : null}
                     <h1 className={styles.campaignTitle}>{campaign.title}</h1>
