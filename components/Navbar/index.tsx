@@ -19,6 +19,10 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
   const logout = () => {
     AuthUser.signOut();
   };
+  const handleClose = () => {
+    setOpenLoginModal(false);
+    setIsRegistering(false);
+  };
 
   return (
     <>
@@ -46,31 +50,23 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
             </h1>
           )}
         </div>
-        <Modal
-          open={openLoginModal}
-          onClose={() => {
-            setOpenLoginModal(false);
-            setIsRegistering(false);
-          }}
-          center
-        >
+        <Modal open={openLoginModal} onClose={handleClose} center>
           <div className={styles.modalContainer}>
-            {isRegistering ? <Register /> : <Login />}
-            <svg
-              width="100%"
-              height="4"
-              viewBox="0 0 375 4"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M375 2L0 3.73205V0.267949L375 2Z" fill="#A12A20" />
-            </svg>
-            <button
-              onClick={() => setIsRegistering(!isRegistering)}
-              className={styles.registerLoginButton}
-            >
-              {isRegistering ? "Go to login" : "Register"}
-            </button>
+            <div className={styles.modalHeader}>
+              <h2 style={{ textAlign: "center" }}>Senso Adventure</h2>
+            </div>
+            {isRegistering ? (
+              <Register
+                closeModal={handleClose}
+                setIsRegistering={setIsRegistering}
+              />
+            ) : (
+              <Login
+                closeModal={handleClose}
+                setIsRegistering={setIsRegistering}
+              />
+            )}
+            <div style={{ marginTop: "1rem" }}></div>
           </div>
         </Modal>
       </div>

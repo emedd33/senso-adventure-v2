@@ -12,7 +12,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <link rel="shortcut icon" href="/images/dice.png" />
+        <link rel="shortcut icon" href="/icons/dice.png" />
         <title>Senso adventure</title>
       </Head>
       <BackgroundLayout>

@@ -7,11 +7,37 @@
 .formContainer {
   display: grid;
   grid-template-rows: auto;
-  height: 10rem;
   justify-content: center;
+  justify-items: center;
 }
 
 .errorMessage {
   text-align: center;
   color: red;
+}
+.registerButton {
+  height: 2rem;
+  width: 100%;
+}
+
+.registerBox {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.registerBoxText {
+  opacity: 0.9;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  font-size: 0.7rem;
+}
+.registerBoxText:hover {
+  text-decoration: underline;
+  box-shadow: none;
+  -webkit-box-shadow: none;
 }

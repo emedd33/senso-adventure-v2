@@ -24,7 +24,7 @@ const SessionPage = () => {
     <>
       <Head>
         <title>{campaign?.title}</title>
-        <link rel="shortcut icon" href="/images/dice.png" />
+        <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
       <BackgroundLayout backgroundImageUrl={campaign?.image}>
         <ContentContainer>

@@ -67,7 +67,6 @@ const initAuth = () => {
      */
     // onTokenRefreshError: (err) => {}
   });
-  console.log("Firebase initialized");
 };
 export default initAuth;
 // export const firebaseAuth = getAuth(app);

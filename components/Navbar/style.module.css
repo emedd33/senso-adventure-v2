@@ -52,6 +52,9 @@
   background-color: #face8b;
   padding: 1rem;
 }
+.modalHeader {
+  padding: 1rem;
+}
 .loginTitle {
   margin: 0;
 }

@@ -1,17 +1,25 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import ContentContainer from "../ContentContainer";
+import { FirebaseError } from "@firebase/util";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  UserCredential,
+} from "firebase/auth";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { ChangeEvent, useState } from "react";
+import Loader from "react-loader-spinner";
 import style from "./style.module.css";
 
-type RegisterProp = {};
-const Register: React.FC<RegisterProp> = ({}) => {
+type RegisterProp = {
+  closeModal?: () => void;
+  setIsRegistering: (value: boolean) => void;
+};
+const Register: React.FC<RegisterProp> = ({ closeModal, setIsRegistering }) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword1, setRegisterPassword1] = useState("");
   const [registerPassword2, setRegisterPassword2] = useState("");
   const register = () => {
-    console.log(registerEmail, registerPassword1, registerPassword2);
-
     if (!registerEmail) {
       setErrorMessage("Fill out email");
     }
@@ -22,15 +30,23 @@ const Register: React.FC<RegisterProp> = ({}) => {
     if (registerPassword2 !== registerPassword1) {
       setErrorMessage("Passwords are not equal");
     }
-    // createUserWithEmailAndPassword(firebaseAuth,registerEmail, registerPassword1).then(user=> {
-    //   console.log(user)
-    // }).catch((err)=>{
-    //   console.log(err)
-    // })
+    if (!errorMessage) return;
+
+    const auth = getAuth();
+
+    createUserWithEmailAndPassword(auth, registerEmail, registerPassword1)
+      .then((user: UserCredential) => {
+        if (closeModal) {
+          closeModal();
+        }
+      })
+      .catch((err: FirebaseError) => {
+        setErrorMessage(err.message);
+      });
   };
+
   return (
     <div>
-      <h2 style={{ textAlign: "center" }}>Register</h2>
       <div
         onKeyDown={(event) => (event.key === "Enter" ? register() : null)}
         className={style.formContainer}
@@ -62,9 +78,40 @@ const Register: React.FC<RegisterProp> = ({}) => {
             setRegisterPassword2(event.target.value)
           }
         ></input>
-        <button onClick={() => register()}>Register</button>
+        <button
+          disabled={isLoading}
+          onClick={register}
+          className={style.registerButton}
+        >
+          {isLoading ? (
+            <Loader type="Oval" color="#fff" height={20} width={20} />
+          ) : (
+            "Register"
+          )}
+        </button>
+        {errorMessage ? (
+          <p className={style.errorMessage}>{errorMessage}</p>
+        ) : null}
       </div>
-      <p className={style.errorMessage}>{errorMessage}</p>
+      <div style={{ margin: "1rem" }}>
+        <svg
+          width="15rem"
+          height="4"
+          viewBox="0 0 375 4"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M375 2L0 3.73205V0.267949L375 2Z" fill="#A12A20" />
+        </svg>
+        <div className={style.registerBox}>
+          <button
+            onClick={() => setIsRegistering(false)}
+            className={style.registerBoxText}
+          >
+            Go back to login
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

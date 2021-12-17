@@ -1,51 +1,108 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import ContentContainer from "../ContentContainer";
+import { FirebaseError } from "@firebase/util";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { ChangeEvent, useState } from "react";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import Loader from "react-loader-spinner";
 import style from "./style.module.css";
 
-type LoginProp = {};
-const Login: React.FC<LoginProp> = ({}) => {
+type LoginProp = {
+  closeModal?: () => void;
+  setIsRegistering: (value: boolean) => void;
+};
+const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  useEffect(() => {
-    setErrorMessage("");
-  }, [loginEmail, loginPassword]);
-  const login = () => {
+  const loginWithEmail = () => {
     if (!loginEmail || !loginPassword) {
       return setErrorMessage("Please fill out loginform");
     }
+    setIsLoading(true);
+
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+      .then(() => {
+        if (closeModal) {
+          closeModal();
+        }
+      })
+      .catch((error: FirebaseError) => {
+        setErrorMessage(error.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
-    <div>
-      <div className={style.formContainer}>
-        <h2 style={{ textAlign: "center" }}>Login</h2>
-        <input
-          id="email"
-          value={loginEmail}
-          type="email"
-          placeholder="Enter email"
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setLoginEmail(event.target.value)
-          }
-        ></input>
-        <input
-          id="password1"
-          value={loginPassword}
-          type="password"
-          placeholder="Enter password"
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setLoginPassword(event.target.value)
-          }
-        ></input>
-        <button onClick={login}>Login</button>
-        {errorMessage ? (
-          <p className={style.errorMessage}>{errorMessage}</p>
-        ) : null}
+    <div
+      className={style.formContainer}
+      onKeyDown={(event) => (event.key === "Enter" ? loginWithEmail() : null)}
+    >
+      <input
+        id="email"
+        value={loginEmail}
+        type="email"
+        placeholder="Enter email"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          setLoginEmail(event.target.value)
+        }
+      ></input>
+      <input
+        id="password1"
+        value={loginPassword}
+        type="password"
+        placeholder="Enter password"
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          setLoginPassword(event.target.value)
+        }
+      ></input>
+      <div className={style.registerBox}>
+        <button
+          onClick={() => setIsRegistering(true)}
+          className={style.registerBoxText}
+        >
+          Don't have an account?
+        </button>
+        <button className={style.registerBoxText}>Forgotten password?</button>
       </div>
+
+      <button
+        disabled={isLoading}
+        onClick={loginWithEmail}
+        className={style.loginButton}
+      >
+        {isLoading ? (
+          <Loader type="Oval" color="#fff" height={20} width={20} />
+        ) : (
+          "Login"
+        )}
+      </button>
+      {errorMessage ? (
+        <p className={style.errorMessage}>{errorMessage}</p>
+      ) : null}
+      <div style={{ margin: "1rem" }}>
+        <svg
+          width="15rem"
+          height="4"
+          viewBox="0 0 375 4"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M375 2L0 3.73205V0.267949L375 2Z" fill="#A12A20" />
+        </svg>
+      </div>
+      <button className={style.googleButton}>
+        <img
+          src="/icons/google.svg"
+          width={"18px"}
+          height={"18px"}
+          style={{ marginRight: "24px" }}
+        />
+        Sign in with Google
+      </button>
     </div>
   );
 };

@@ -1,6 +1,5 @@
 .container {
-  width: 20rem;
-  height: 30rem;
+  width: 100%;
   padding: 1rem;
   display: grid;
   grid-template-rows: minmax(min-content, max-content);
@@ -8,12 +7,50 @@
 
 .formContainer {
   display: grid;
-  grid-template-rows: auto;
+  grid-template-rows: minmax(min-content, max-content);
   justify-content: center;
-  margin-bottom: 1rem;
+  justify-items: center;
 }
 
 .errorMessage {
   text-align: center;
   color: red;
+  margin-bottom: 0;
+}
+
+.registerBox {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.registerBoxText {
+  opacity: 0.9;
+  cursor: pointer;
+  font-size: 0.7rem;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  background-color: transparent;
+}
+.registerBoxText:hover {
+  text-decoration: underline;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+.loginButton {
+  height: 2rem;
+  width: 100%;
+}
+.googleButton {
+  background-color: white;
+  font-family: "Roboto", sans-serif;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  width: 200px;
 }

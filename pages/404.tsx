@@ -8,7 +8,7 @@ export default function Custom404() {
     <>
       <Head>
         <title>Senso Adventure</title>
-        <link rel="shortcut icon" href="/images/dice.png" />
+        <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
       <BackgroundLayout>
         <ContentContainer style={{ backgroundColor: "#face8b" }}>
