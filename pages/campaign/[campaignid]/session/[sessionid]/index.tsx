@@ -8,7 +8,8 @@ import styled from "./style.module.css";
 import Custom404 from "../../../../404";
 import { text } from "../../../../../assets/loremIpsum";
 import BackNavigation from "../../../../../components/BackNavigation";
-const CampaignPage = () => {
+import { AuthAction, withAuthUser } from "next-firebase-auth";
+const SessionPage = () => {
   const router = useRouter();
   const { campaignid, sessionid } = router.query;
 
@@ -23,6 +24,7 @@ const CampaignPage = () => {
     <>
       <Head>
         <title>{campaign?.title}</title>
+        <link rel="shortcut icon" href="/images/dice.png" />
       </Head>
       <BackgroundLayout backgroundImageUrl={campaign?.image}>
         <ContentContainer>
@@ -37,5 +39,6 @@ const CampaignPage = () => {
     </>
   );
 };
-
-export default CampaignPage;
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.RENDER,
+})(SessionPage);

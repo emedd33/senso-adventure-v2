@@ -7,6 +7,7 @@ import content, { Session } from "../../../assets/campaints";
 import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
 import Custom404 from "../../404";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
 
 const CampaignPage = () => {
   const router = useRouter();
@@ -25,6 +26,7 @@ const CampaignPage = () => {
     <>
       <Head>
         <title>{campaign?.title}</title>
+        <link rel="shortcut icon" href="/images/dice.png" />
       </Head>
       <BackgroundLayout backgroundImageUrl={campaign?.image}>
         <ContentContainer>
@@ -69,4 +71,6 @@ const CampaignPage = () => {
   );
 };
 
-export default CampaignPage;
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.RENDER,
+})(CampaignPage);

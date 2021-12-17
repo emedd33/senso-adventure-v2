@@ -1,13 +1,24 @@
+import {
+  unsetAuthCookies,
+  useAuthUser,
+  withAuthUserTokenSSR,
+} from "next-firebase-auth";
 import Link from "next/link";
 import React, { useState } from "react";
 import Modal from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
-import Login from "../login/login";
+import Login from "../Login";
+import Register from "../Register";
 import styles from "./style.module.css";
 type NavbarProp = {};
 
 const Navbar: React.FC<NavbarProp> = ({}) => {
   const [openLoginModal, setOpenLoginModal] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const AuthUser = useAuthUser();
+  const logout = () => {
+    AuthUser.signOut();
+  };
 
   return (
     <>
@@ -21,20 +32,46 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
           </Link>
         </div>
         <div className={styles.loginContainer}>
-          <h1
-            tabIndex={0}
-            className={styles.loginTitle}
-            onClick={() => setOpenLoginModal(true)}
-          >
-            Login
-          </h1>
+          {AuthUser.email ? (
+            <h1 className={styles.loginTitle} onClick={logout}>
+              {AuthUser.email}
+            </h1>
+          ) : (
+            <h1
+              tabIndex={0}
+              className={styles.loginTitle}
+              onClick={() => setOpenLoginModal(true)}
+            >
+              Login
+            </h1>
+          )}
         </div>
         <Modal
           open={openLoginModal}
-          onClose={() => setOpenLoginModal(false)}
+          onClose={() => {
+            setOpenLoginModal(false);
+            setIsRegistering(false);
+          }}
           center
         >
-          <Login />
+          <div className={styles.modalContainer}>
+            {isRegistering ? <Register /> : <Login />}
+            <svg
+              width="100%"
+              height="4"
+              viewBox="0 0 375 4"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M375 2L0 3.73205V0.267949L375 2Z" fill="#A12A20" />
+            </svg>
+            <button
+              onClick={() => setIsRegistering(!isRegistering)}
+              className={styles.registerLoginButton}
+            >
+              {isRegistering ? "Go to login" : "Register"}
+            </button>
+          </div>
         </Modal>
       </div>
     </>

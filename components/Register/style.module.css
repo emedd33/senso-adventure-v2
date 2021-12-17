@@ -1,6 +1,4 @@
 .container {
-  width: 20rem;
-  height: 30rem;
   padding: 1rem;
   display: grid;
   grid-template-rows: minmax(min-content, max-content);
@@ -9,8 +7,8 @@
 .formContainer {
   display: grid;
   grid-template-rows: auto;
+  height: 10rem;
   justify-content: center;
-  margin-bottom: 1rem;
 }
 
 .errorMessage {

@@ -6,11 +6,13 @@ import BackgroundLayout from "../components/BackgroundLayout";
 import ContentContainer from "../components/ContentContainer";
 import content, { Campaign } from "../assets/campaints";
 import Link from "next/link";
+import { withAuthUser, withAuthUserTokenSSR } from "next-firebase-auth";
 
 const Home: NextPage = () => {
   return (
     <>
       <Head>
+        <link rel="shortcut icon" href="/images/dice.png" />
         <title>Senso adventure</title>
       </Head>
       <BackgroundLayout>
@@ -40,5 +42,7 @@ const Home: NextPage = () => {
     </>
   );
 };
+// Note that this is a higher-order function.
+export const getServerSideProps = withAuthUserTokenSSR()();
 
-export default Home;
+export default withAuthUser()(Home);
