@@ -7,10 +7,11 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import Modal from "react-responsive-modal";
-import "react-responsive-modal/styles.css";
-import Login from "../Login";
+// import Login from "../Login";
 import Register from "../Register";
 import styles from "./style.module.css";
+
+import "react-responsive-modal/styles.css";
 type NavbarProp = {};
 
 const Navbar: React.FC<NavbarProp> = ({}) => {
@@ -57,17 +58,18 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
               <h2 style={{ textAlign: "center" }}>Senso Adventure</h2>
               <Image src="/icons/dice.png" width={30} height={30} />
             </div>
-            {isRegistering ? (
-              <Register
-                closeModal={handleClose}
-                setIsRegistering={setIsRegistering}
-              />
-            ) : (
-              <Login
-                closeModal={handleClose}
-                setIsRegistering={setIsRegistering}
-              />
-            )}
+            {
+              isRegistering ? (
+                <Register
+                  closeModal={handleClose}
+                  setIsRegistering={setIsRegistering}
+                />
+              ) : null
+              // <Login
+              //   closeModal={handleClose}
+              //   setIsRegistering={setIsRegistering}
+              // />
+            }
             <div style={{ marginTop: "1rem" }}></div>
           </div>
         </Modal>
