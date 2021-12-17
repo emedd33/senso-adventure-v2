@@ -1,7 +1,7 @@
 import { FirebaseError } from "@firebase/util";
 import {
   getAuth,
-  GoogleAuthProvider,
+  // GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
@@ -11,11 +11,14 @@ import style from "./style.module.css";
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
-type LoginProp = {
+type LoginComponentProp = {
   closeModal?: () => void;
   setIsRegistering: (value: boolean) => void;
 };
-const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
+const LoginComponent: React.FC<LoginComponentProp> = ({
+  closeModal,
+  setIsRegistering,
+}) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
@@ -43,22 +46,21 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
   };
 
   const loginWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        console.log(result);
-        if (closeModal) {
-          closeModal();
-        }
-
-        // ...
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        console.log(error);
-      });
+    // const provider = new GoogleAuthProvider();
+    // const auth = getAuth();
+    // signInWithPopup(auth, provider)
+    //   .then((result) => {
+    //     // This gives you a Google Access Token. You can use it to access the Google API.
+    //     console.log(result);
+    //     if (closeModal) {
+    //       closeModal();
+    //     }
+    //     // ...
+    //   })
+    //   .catch((error) => {
+    //     // Handle Errors here.
+    //     console.log(error);
+    //   });
   };
   return (
     <div
@@ -130,4 +132,4 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
     </div>
   );
 };
-export default Login;
+export default LoginComponent;
