@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import Modal from "react-responsive-modal";
-import Login from "../Login";
+import LoginContainer from "../LoginContainer";
 import Register from "../Register";
 import styles from "./style.module.css";
 
@@ -64,7 +64,7 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
                 setIsRegistering={setIsRegistering}
               />
             ) : (
-              <Login
+              <LoginContainer
                 closeModal={handleClose}
                 setIsRegistering={setIsRegistering}
               />
