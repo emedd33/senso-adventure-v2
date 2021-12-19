@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import initAuth from "../firebase/firebase-config";
-initAuth();
+import initFirebase from "../firebase/firebase-config";
+initFirebase();
 function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
 }

@@ -8,7 +8,6 @@ import styled from "./style.module.css";
 import Custom404 from "../../../../404";
 import { text } from "../../../../../assets/loremIpsum";
 import BackNavigation from "../../../../../components/BackNavigation";
-import { AuthAction, withAuthUser } from "next-firebase-auth";
 const SessionPage = () => {
   const router = useRouter();
   const { campaignid, sessionid } = router.query;
@@ -39,6 +38,4 @@ const SessionPage = () => {
     </>
   );
 };
-export default withAuthUser({
-  whenUnauthedAfterInit: AuthAction.RENDER,
-})(SessionPage);
+export default SessionPage;

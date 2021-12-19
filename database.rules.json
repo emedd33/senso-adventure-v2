@@ -1,0 +1,11 @@
+{
+  "rules": {
+    ".read": "auth.uid != null",
+    ".write": "auth.uid != null",
+    "campaigns": {
+      "$key": {
+        ".write": "auth != null && data.child('dungeonMaster').child('uid').val() == auth.uid"
+      }
+    }
+  }
+}

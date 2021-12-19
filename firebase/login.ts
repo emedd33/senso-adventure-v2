@@ -6,10 +6,8 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 
-const provider = new GoogleAuthProvider();
-const auth = getAuth();
-
 export const dispatchLoginWithEmail = (email: string, password: string) => {
+  const auth = getAuth();
   return signInWithEmailAndPassword(auth, email, password)
     .then(() => {
       return { code: 0, message: "" };
@@ -20,6 +18,8 @@ export const dispatchLoginWithEmail = (email: string, password: string) => {
 };
 
 export const dispatchLoginWithGoogle = () => {
+  const provider = new GoogleAuthProvider();
+  const auth = getAuth();
   return signInWithPopup(auth, provider)
     .then(() => {
       // This gives you a Google Access Token. You can use it to access the Google API.

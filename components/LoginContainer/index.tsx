@@ -1,10 +1,3 @@
-import { FirebaseError } from "@firebase/util";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
 import { ChangeEvent, useState } from "react";
 import Loader from "react-loader-spinner";
 import style from "./style.module.css";

@@ -1,13 +1,9 @@
-import { FirebaseError } from "@firebase/util";
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  UserCredential,
-} from "firebase/auth";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { ChangeEvent, useState } from "react";
 import Loader from "react-loader-spinner";
 import style from "./style.module.css";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { FirebaseError } from "firebase-admin";
 
 type RegisterProp = {
   closeModal?: () => void;
@@ -35,7 +31,7 @@ const Register: React.FC<RegisterProp> = ({ closeModal, setIsRegistering }) => {
     const auth = getAuth();
 
     createUserWithEmailAndPassword(auth, registerEmail, registerPassword1)
-      .then((user: UserCredential) => {
+      .then(() => {
         if (closeModal) {
           closeModal();
         }

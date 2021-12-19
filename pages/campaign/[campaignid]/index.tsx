@@ -7,7 +7,6 @@ import content, { Session } from "../../../assets/campaints";
 import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
 import Custom404 from "../../404";
-import { AuthAction, withAuthUser } from "next-firebase-auth";
 
 const CampaignPage = () => {
   const router = useRouter();
@@ -71,6 +70,4 @@ const CampaignPage = () => {
   );
 };
 
-export default withAuthUser({
-  whenUnauthedAfterInit: AuthAction.RENDER,
-})(CampaignPage);
+export default CampaignPage;

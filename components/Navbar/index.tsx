@@ -1,8 +1,3 @@
-import {
-  unsetAuthCookies,
-  useAuthUser,
-  withAuthUserTokenSSR,
-} from "next-firebase-auth";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -10,16 +5,18 @@ import Modal from "react-responsive-modal";
 import LoginContainer from "../LoginContainer";
 import Register from "../Register";
 import styles from "./style.module.css";
-
+import { useAuthState } from "react-firebase-hooks/auth";
 import "react-responsive-modal/styles.css";
+import { getAuth, signOut } from "firebase/auth";
 type NavbarProp = {};
 
 const Navbar: React.FC<NavbarProp> = ({}) => {
+  const auth = getAuth();
+  const [user, loading, error] = useAuthState(auth);
   const [openLoginModal, setOpenLoginModal] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const AuthUser = useAuthUser();
   const logout = () => {
-    AuthUser.signOut();
+    signOut(auth).catch((error) => console.error(error));
   };
   const handleClose = () => {
     setOpenLoginModal(false);
@@ -38,9 +35,9 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
           </Link>
         </div>
         <div className={styles.loginContainer}>
-          {AuthUser.email ? (
+          {user ? (
             <h1 className={styles.loginTitle} onClick={logout}>
-              {AuthUser.email}
+              {user.email}
             </h1>
           ) : (
             <h1

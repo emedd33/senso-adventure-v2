@@ -4,11 +4,28 @@ import Image from "next/image";
 import styles from "../styles/index.module.css";
 import BackgroundLayout from "../components/BackgroundLayout";
 import ContentContainer from "../components/ContentContainer";
-import content, { Campaign } from "../assets/campaints";
+import { Campaign } from "../assets/campaints";
 import Link from "next/link";
-import { withAuthUser, withAuthUserTokenSSR } from "next-firebase-auth";
+import { useEffect, useMemo, useState } from "react";
+import { child, get, getDatabase, ref } from "firebase/database";
 
 const Home: NextPage = () => {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  useMemo(() => {
+    get(child(ref(getDatabase()), `campaign/`))
+      .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
+      .then((res) => {
+        setCampaigns(
+          Object.keys(res).map((id) => ({
+            ...res[id],
+            id: id,
+            image: `/images/${id}.jpg`,
+          }))
+        );
+      })
+      .catch((error) => console.error(error));
+  }, []);
+  useEffect(() => console.log(campaigns), [campaigns]);
   return (
     <>
       <Head>
@@ -18,7 +35,7 @@ const Home: NextPage = () => {
       <BackgroundLayout>
         <ContentContainer>
           <div className={styles.container}>
-            {content.map((campaign: Campaign) => {
+            {campaigns.map((campaign: Campaign) => {
               return (
                 <Link key={campaign.id} href={`/campaign/${campaign.id}`}>
                   <a key={campaign.id} className={styles.campaignContainer}>
@@ -43,6 +60,5 @@ const Home: NextPage = () => {
   );
 };
 // Note that this is a higher-order function.
-export const getServerSideProps = withAuthUserTokenSSR()();
 
-export default withAuthUser()(Home);
+export default Home;
