@@ -3,34 +3,62 @@ import { useRouter } from "next/router";
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
-import content, { Session } from "../../../assets/campaints";
+import { Campaign, Session } from "../../../assets/campaign.type";
 import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
 import Custom404 from "../../404";
+import { child, get, getDatabase, ref, set } from "firebase/database";
+import { useMemo, useState } from "react";
 
 const CampaignPage = () => {
   const router = useRouter();
   const { campaignid } = router.query;
-
-  // TODO: switch to backend api
-  const campaign = content.find((e) => e.id === campaignid);
+  const [campaign, setCampaign] = useState<Campaign>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  useMemo(() => {
+    setIsLoading(true);
+    get(child(ref(getDatabase()), `campaign/${campaignid}`))
+      .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
+      .then((res) => {
+        if (res && campaignid) {
+          setCampaign({
+            ...res,
+            id: campaignid,
+            image: `/images/${campaignid}.jpg`,
+            sessions: res.sessions
+              ? Object.keys(res.sessions).map((id) => ({
+                  ...res.sessions[id],
+                  id: id,
+                }))
+              : [],
+          });
+        }
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
+  }, [campaignid]);
 
   const getTextSnippet = (text: string, start: number = 0, end?: number) => {
     return text.substring(start, end ? end : text.length);
   };
+
+  if (isLoading) {
+    return <BackgroundLayout isLoading={isLoading}></BackgroundLayout>;
+  }
   if (!campaign) {
     return <Custom404 />;
   }
+
   return (
     <>
       <Head>
-        <title>{campaign?.title}</title>
+        <title>{campaign.title}</title>
         <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
-      <BackgroundLayout backgroundImageUrl={campaign?.image}>
+      <BackgroundLayout backgroundImageUrl={campaign.image}>
         <ContentContainer>
-          <h1 className={styles.title}>{campaign?.title}</h1>
-          {campaign?.sessions.map((session: Session) => {
+          <h1 className={styles.title}>{campaign.title}</h1>
+          {campaign.sessions?.map((session: Session) => {
             return (
               <Link
                 key={session.id}

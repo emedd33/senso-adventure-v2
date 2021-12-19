@@ -4,14 +4,16 @@ import Image from "next/image";
 import styles from "../styles/index.module.css";
 import BackgroundLayout from "../components/BackgroundLayout";
 import ContentContainer from "../components/ContentContainer";
-import { Campaign } from "../assets/campaints";
+import { Campaign } from "../assets/campaign.type";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { child, get, getDatabase, ref } from "firebase/database";
 
 const Home: NextPage = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   useMemo(() => {
+    setIsLoading(true);
     get(child(ref(getDatabase()), `campaign/`))
       .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
       .then((res) => {
@@ -23,16 +25,17 @@ const Home: NextPage = () => {
           }))
         );
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
   }, []);
-  useEffect(() => console.log(campaigns), [campaigns]);
+
   return (
     <>
       <Head>
         <link rel="shortcut icon" href="/icons/dice.png" />
         <title>Senso adventure</title>
       </Head>
-      <BackgroundLayout>
+      <BackgroundLayout isLoading={isLoading}>
         <ContentContainer>
           <div className={styles.container}>
             {campaigns.map((campaign: Campaign) => {

@@ -3,7 +3,7 @@ export type Campaign = {
   id: string;
   title: string;
   image: any;
-  sessions: Session[];
+  sessions?: Session[];
 };
 
 export type Session = { id: string; title: string; subTitle: string };

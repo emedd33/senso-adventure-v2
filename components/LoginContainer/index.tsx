@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from "react";
-import Loader from "react-loader-spinner";
 import style from "./style.module.css";
-
+import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import {
   dispatchLoginWithEmail,

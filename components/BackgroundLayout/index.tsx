@@ -3,13 +3,18 @@ import Footer from "../Footer";
 import Navbar from "../Navbar";
 import styles from "./style.module.css";
 import Image from "next/image";
+import Loader from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+
 type BackgroundComponentProp = {
-  children: any;
+  children?: any;
   backgroundImageUrl?: string;
+  isLoading?: boolean;
 };
 const BackgroundLayout: React.FC<BackgroundComponentProp> = ({
   children,
   backgroundImageUrl,
+  isLoading,
 }) => {
   return (
     <>
@@ -27,7 +32,13 @@ const BackgroundLayout: React.FC<BackgroundComponentProp> = ({
           />
         </div>
         <Navbar />
-        <div className={styles.contentContainer}>{children}</div>
+        <div className={styles.contentContainer}>
+          {isLoading ? (
+            <Loader type="Oval" color="#fff" height={80} width={80} />
+          ) : (
+            children
+          )}
+        </div>
       </div>
       <Footer />
     </>
