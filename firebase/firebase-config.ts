@@ -15,4 +15,5 @@ const initFirebase = () => {
 
   initializeApp(clientCredentials);
 };
+
 export default initFirebase;
