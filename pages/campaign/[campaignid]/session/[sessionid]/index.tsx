@@ -8,8 +8,15 @@ import { text } from "../../../../../assets/loremIpsum";
 import BackNavigation from "../../../../../components/BackNavigation";
 import { child, get, getDatabase, ref } from "firebase/database";
 import { Params } from "next/dist/server/router";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import { quillFormats, quillModules } from "../../../../../assets/quill";
+import "react-quill/dist/quill.snow.css";
 
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({ campaignId, session }: Params) => {
+  const [value, setValue] = useState(text);
+  const [isEditMode, setIsEditMode] = useState(false);
   if (!session || !campaignId) {
     return <Custom404 />;
   }
@@ -25,8 +32,21 @@ const SessionPage = ({ campaignId, session }: Params) => {
           <div className={styled.container}>
             <h1 className={styles.title}>{session?.title}</h1>
             <h2 className={styles.subtitle}>{session?.subTitle}</h2>
-            <p>{text}</p>
+            {isEditMode ? (
+              <div className={styles.quillContainer}>
+                <ReactQuill
+                  theme="snow"
+                  value={value}
+                  onChange={setValue}
+                  modules={quillModules}
+                  formats={quillFormats}
+                ></ReactQuill>
+              </div>
+            ) : (
+              <p>{value}</p>
+            )}
           </div>
+          <button onClick={() => setIsEditMode(!isEditMode)}>Edit</button>
         </ContentContainer>
       </BackgroundLayout>
     </>

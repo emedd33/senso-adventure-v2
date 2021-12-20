@@ -16,3 +16,8 @@
 .subtitle {
   text-align: center;
 }
+
+.quillContainer {
+  margin-bottom: 5rem;
+  background-color: white;
+}
