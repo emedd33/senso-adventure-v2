@@ -3,7 +3,7 @@ module.exports = {
   reactStrictMode: true,
   swcMinify: false,
   images: {
-    domains: ["localhost"],
+    domains: ["localhost", "firebasestorage.googleapis.com"],
   },
   async redirects() {
     return [

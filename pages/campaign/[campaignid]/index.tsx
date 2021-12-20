@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { getStorage } from "firebase/storage";
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
@@ -103,7 +103,6 @@ export async function getStaticProps({ params }: Params) {
       }
     })
     .catch((error) => console.error(error));
-
   return {
     props: { campaign: campaign }, // will be passed to the page component as props
   };

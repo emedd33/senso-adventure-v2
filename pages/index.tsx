@@ -9,33 +9,21 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { child, get, getDatabase, ref } from "firebase/database";
 
-const Home: NextPage = () => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  useMemo(() => {
-    setIsLoading(true);
-    get(child(ref(getDatabase()), `campaign/`))
-      .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
-      .then((res) => {
-        setCampaigns(
-          Object.keys(res).map((id) => ({
-            ...res[id],
-            id: id,
-            image: `/images/${id}.jpg`,
-          }))
-        );
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setIsLoading(false));
-  }, []);
+import { Params } from "next/dist/server/router";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+} from "firebase/storage";
 
+const Home: NextPage = ({ campaigns }: Params) => {
   return (
     <>
       <Head>
         <link rel="shortcut icon" href="/icons/dice.png" />
         <title>Senso adventure</title>
       </Head>
-      <BackgroundLayout isLoading={isLoading}>
+      <BackgroundLayout>
         <ContentContainer>
           <div className={styles.container}>
             {campaigns.map((campaign: Campaign) => {
@@ -62,6 +50,30 @@ const Home: NextPage = () => {
     </>
   );
 };
-// Note that this is a higher-order function.
+
+export async function getStaticProps({ params }: Params) {
+  const storage = getStorage();
+  const campaigns = await get(child(ref(getDatabase()), `campaign/`))
+    .then((snapshot) =>
+      Promise.all(
+        Object.keys(snapshot.val()).map((id) =>
+          getDownloadURL(storageRef(storage, `images/${id}.jpg`)).then(
+            (url) => {
+              return {
+                ...snapshot.val()[id],
+                id: id,
+                image: url,
+              };
+            }
+          )
+        )
+      )
+    )
+    .catch((error) => console.error(error));
+
+  return {
+    props: { campaigns: campaigns }, // will be passed to the page component as props
+  };
+}
 
 export default Home;
