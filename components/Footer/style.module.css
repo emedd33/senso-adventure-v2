@@ -2,4 +2,12 @@
   height: 5rem;
   background-color: black;
   width: 100%;
+  display: grid;
+  grid-template-rows: minmax(min-content, max-content);
+  padding: 1rem;
+}
+
+.githubLogo {
+  margin-left: 2rem;
+  cursor: pointer;
 }
