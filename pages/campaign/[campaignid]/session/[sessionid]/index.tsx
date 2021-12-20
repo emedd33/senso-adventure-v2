@@ -32,19 +32,20 @@ const SessionPage = ({ campaignId, session }: Params) => {
           <div className={styled.container}>
             <h1 className={styles.title}>{session?.title}</h1>
             <h2 className={styles.subtitle}>{session?.subTitle}</h2>
-            {isEditMode ? (
-              <div className={styles.quillContainer}>
-                <ReactQuill
-                  theme="snow"
-                  value={value}
-                  onChange={setValue}
-                  modules={quillModules}
-                  formats={quillFormats}
-                ></ReactQuill>
-              </div>
-            ) : (
-              <p>{value}</p>
-            )}
+            <div
+              className={
+                isEditMode ? styles.quillContainer : styles.quillContainerRead
+              }
+            >
+              <ReactQuill
+                theme="snow"
+                value={value}
+                onChange={setValue}
+                modules={isEditMode ? quillModules : { toolbar: [] }}
+                formats={isEditMode ? quillFormats : []}
+                readOnly={!isEditMode}
+              ></ReactQuill>
+            </div>
           </div>
           <button onClick={() => setIsEditMode(!isEditMode)}>Edit</button>
         </ContentContainer>

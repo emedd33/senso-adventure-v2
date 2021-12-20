@@ -21,3 +21,9 @@
   margin-bottom: 5rem;
   background-color: white;
 }
+
+.quillContainerRead {
+  margin-bottom: 5rem;
+  border: none;
+  background-color: #face8b;
+}

@@ -45,6 +45,10 @@ button:hover {
 button:focus-visible {
   outline: 1px solid black;
 }
+.ql-container.ql-snow,
+.ql-toolbar.ql-snow {
+  border: none !important;
+}
 
 input,
 select {
