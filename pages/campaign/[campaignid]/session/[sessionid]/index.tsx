@@ -1,17 +1,11 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
 import styles from "./style.module.css";
-import content, {
-  Campaign,
-  Session,
-} from "../../../../../assets/campaign.type";
 import BackgroundLayout from "../../../../../components/BackgroundLayout";
 import ContentContainer from "../../../../../components/ContentContainer";
 import styled from "./style.module.css";
 import Custom404 from "../../../../404";
 import { text } from "../../../../../assets/loremIpsum";
 import BackNavigation from "../../../../../components/BackNavigation";
-import { useMemo, useState } from "react";
 import { child, get, getDatabase, ref } from "firebase/database";
 import { Params } from "next/dist/server/router";
 
@@ -27,8 +21,8 @@ const SessionPage = ({ campaignId, session }: Params) => {
       </Head>
       <BackgroundLayout backgroundImageUrl={`/images/${campaignId}.jpg`}>
         <ContentContainer>
+          <BackNavigation href={`/campaign/${campaignId}`} />
           <div className={styled.container}>
-            <BackNavigation href={`/campaign/${campaignId}`} />
             <h1 className={styles.title}>{session?.title}</h1>
             <h2 className={styles.subtitle}>{session?.subTitle}</h2>
             <p>{text}</p>

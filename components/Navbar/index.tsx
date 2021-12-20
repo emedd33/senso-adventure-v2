@@ -13,13 +13,13 @@ type NavbarProp = {};
 const Navbar: React.FC<NavbarProp> = ({}) => {
   const auth = getAuth();
   const [user, loading, error] = useAuthState(auth);
-  const [openLoginModal, setOpenLoginModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const logout = () => {
     signOut(auth).catch((error) => console.error(error));
   };
   const handleClose = () => {
-    setOpenLoginModal(false);
+    setOpenModal(false);
     setIsRegistering(false);
   };
 
@@ -36,26 +36,33 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
         </div>
         <div className={styles.loginContainer}>
           {user ? (
-            <h1 className={styles.loginTitle} onClick={logout}>
+            <h1
+              className={styles.loginTitle}
+              onClick={() => setOpenModal(true)}
+            >
               {user.email}
             </h1>
           ) : (
             <h1
               tabIndex={0}
               className={styles.loginTitle}
-              onClick={() => setOpenLoginModal(true)}
+              onClick={() => setOpenModal(true)}
             >
               Login
             </h1>
           )}
         </div>
-        <Modal open={openLoginModal} onClose={handleClose} center>
+        <Modal open={openModal} onClose={handleClose} center>
           <div className={styles.modalContainer}>
             <div className={styles.modalHeader}>
               <h2 style={{ textAlign: "center" }}>Senso Adventure</h2>
               <Image src="/icons/dice.png" width={30} height={30} />
             </div>
-            {isRegistering ? (
+            {user ? (
+              <button onClick={logout} style={{ color: "red" }}>
+                Logout
+              </button>
+            ) : isRegistering ? (
               <Register
                 closeModal={handleClose}
                 setIsRegistering={setIsRegistering}

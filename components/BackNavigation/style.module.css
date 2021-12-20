@@ -3,4 +3,6 @@
   justify-content: flex-start;
   align-items: center;
   width: fit-content;
+  width: 100%;
+  color: #face8b;
 }

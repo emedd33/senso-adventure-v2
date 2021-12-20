@@ -10,6 +10,7 @@ import Custom404 from "../../404";
 import { child, get, getDatabase, ref, set } from "firebase/database";
 import { useMemo, useState } from "react";
 import { Params } from "next/dist/server/router";
+import BackNavigation from "../../../components/BackNavigation";
 
 const CampaignPage = ({ campaign }: Params) => {
   const getTextSnippet = (text: string, start: number = 0, end?: number) => {
@@ -26,9 +27,11 @@ const CampaignPage = ({ campaign }: Params) => {
         <title>{campaign.title}</title>
         <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
+
       <BackgroundLayout backgroundImageUrl={campaign.image}>
         <ContentContainer>
           <h1 className={styles.title}>{campaign.title}</h1>
+          <BackNavigation href={`/`} />
           {campaign.sessions?.map((session: Session) => {
             return (
               <Link
