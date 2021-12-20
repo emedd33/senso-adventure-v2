@@ -3,48 +3,19 @@ import { useRouter } from "next/router";
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
-import { Campaign, Session } from "../../../assets/campaign.type";
+import content, { Campaign, Session } from "../../../assets/campaign.type";
 import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
 import Custom404 from "../../404";
 import { child, get, getDatabase, ref, set } from "firebase/database";
 import { useMemo, useState } from "react";
+import { Params } from "next/dist/server/router";
 
-const CampaignPage = () => {
-  const router = useRouter();
-  const { campaignid } = router.query;
-  const [campaign, setCampaign] = useState<Campaign>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  useMemo(() => {
-    setIsLoading(true);
-    get(child(ref(getDatabase()), `campaign/${campaignid}`))
-      .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
-      .then((res) => {
-        if (res && campaignid) {
-          setCampaign({
-            ...res,
-            id: campaignid,
-            image: `/images/${campaignid}.jpg`,
-            sessions: res.sessions
-              ? Object.keys(res.sessions).map((id) => ({
-                  ...res.sessions[id],
-                  id: id,
-                }))
-              : [],
-          });
-        }
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setIsLoading(false));
-  }, [campaignid]);
-
+const CampaignPage = ({ campaign }: Params) => {
   const getTextSnippet = (text: string, start: number = 0, end?: number) => {
     return text.substring(start, end ? end : text.length);
   };
 
-  if (isLoading) {
-    return <BackgroundLayout isLoading={isLoading}></BackgroundLayout>;
-  }
   if (!campaign) {
     return <Custom404 />;
   }
@@ -98,4 +69,43 @@ const CampaignPage = () => {
   );
 };
 
+export async function getStaticPaths() {
+  // Creates all the static paths from the database instances
+  const campaignPaths = await get(child(ref(getDatabase()), `campaign`)).then(
+    (snapshot) => (snapshot.exists() ? Object.keys(snapshot.val()) : null)
+  );
+  return {
+    paths: campaignPaths?.map((path) => ({ params: { campaignid: path } })),
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({ params }: Params) {
+  // fetches the campaign data pased on the path
+  const campaignId = params.campaignid;
+  const campaign = await get(
+    child(ref(getDatabase()), `campaign/${campaignId}`)
+  )
+    .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
+    .then((res) => {
+      if (res && campaignId) {
+        return {
+          ...res,
+          id: campaignId,
+          image: `/images/${campaignId}.jpg`,
+          sessions: res.sessions
+            ? Object.keys(res.sessions).map((id) => ({
+                ...res.sessions[id],
+                id: id,
+              }))
+            : [],
+        };
+      }
+    })
+    .catch((error) => console.error(error));
+
+  return {
+    props: { campaign: campaign }, // will be passed to the page component as props
+  };
+}
 export default CampaignPage;

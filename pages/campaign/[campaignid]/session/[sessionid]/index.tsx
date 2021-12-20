@@ -13,44 +13,10 @@ import { text } from "../../../../../assets/loremIpsum";
 import BackNavigation from "../../../../../components/BackNavigation";
 import { useMemo, useState } from "react";
 import { child, get, getDatabase, ref } from "firebase/database";
+import { Params } from "next/dist/server/router";
 
-const SessionPage = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const { campaignid, sessionid } = router.query;
-  const [session, setSession] = useState<Session>();
-  const [campaign, setCampaign] = useState<Campaign>();
-  useMemo(() => {
-    setIsLoading(true);
-    get(
-      child(ref(getDatabase()), `campaign/${campaignid}/sessions/${sessionid}`)
-    )
-      .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
-      .then((res) => {
-        if (res) {
-          setSession({ ...res, id: sessionid });
-        }
-      })
-      .catch((error) => console.error(error));
-    get(child(ref(getDatabase()), `campaign/${campaignid}`))
-      .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
-      .then((res) => {
-        if (res) {
-          setCampaign({
-            ...res,
-            id: campaignid,
-            image: `/images/${campaignid}.jpg`,
-          });
-        }
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setIsLoading(false));
-  }, [campaignid, sessionid]);
-
-  if (isLoading) {
-    return <BackgroundLayout isLoading={isLoading}></BackgroundLayout>;
-  }
-  if (!session || !campaignid) {
+const SessionPage = ({ campaignId, session }: Params) => {
+  if (!session || !campaignId) {
     return <Custom404 />;
   }
   return (
@@ -59,10 +25,10 @@ const SessionPage = () => {
         <title>{session.title}</title>
         <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
-      <BackgroundLayout backgroundImageUrl={campaign?.image}>
+      <BackgroundLayout backgroundImageUrl={`/images/${campaignId}.jpg`}>
         <ContentContainer>
           <div className={styled.container}>
-            <BackNavigation href={`/campaign/${campaignid}`} />
+            <BackNavigation href={`/campaign/${campaignId}`} />
             <h1 className={styles.title}>{session?.title}</h1>
             <h2 className={styles.subtitle}>{session?.subTitle}</h2>
             <p>{text}</p>
@@ -72,4 +38,48 @@ const SessionPage = () => {
     </>
   );
 };
+
+export async function getStaticPaths() {
+  // Creates all the static paths from the database instances
+  const campaigns = await get(child(ref(getDatabase()), `campaign`))
+    .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
+    .then((campaigns) => {
+      return Object.entries(campaigns)
+        .map(([id, campaign]: [string, any]) => {
+          if (campaign.sessions) {
+            return Object.keys(campaign.sessions).map((sessionId: any) => {
+              return { campaignId: id, sessionId: sessionId };
+            });
+          }
+          return [{ campaignId: id, sessionId: undefined }];
+        })
+        .flat()
+        .filter((path) => path.campaignId && path.sessionId);
+    });
+
+  return {
+    paths: campaigns?.map((paths) => ({
+      params: { campaignid: paths.campaignId, sessionid: paths.sessionId },
+    })),
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({ params }: any) {
+  // fetches the campaign data pased on the path
+  const campaignId = params.campaignid;
+  const sessionId = params.sessionid;
+  const session = await get(
+    child(ref(getDatabase()), `campaign/${campaignId}/sessions/${sessionId}`)
+  )
+    .then((snapshot) =>
+      snapshot.exists() ? { ...snapshot.val(), id: snapshot.key } : null
+    )
+    .catch((error) => console.error(error));
+
+  return {
+    props: { campaignId: campaignId, session: session }, // will be passed to the page component as props
+  };
+}
+
 export default SessionPage;
