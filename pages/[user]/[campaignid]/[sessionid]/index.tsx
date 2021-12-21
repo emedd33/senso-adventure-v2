@@ -7,24 +7,21 @@ import Custom404 from "../../../404";
 import { text } from "../../../../assets/loremIpsum";
 import BackNavigation from "../../../../components/BackNavigation";
 import { child, get, getDatabase, ref } from "firebase/database";
-import { Params } from "next/dist/server/router";
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { quillFormats, quillModules } from "../../../../assets/quill";
 import "react-quill/dist/quill.snow.css";
 import {
   FirebaseCampaignItems,
-  FirebaseSessionItems,
   FirebaseUser,
   FirebaseUserItems,
+  SessionIdPageProps,
 } from "../../../../assets/campaign.type";
-import path from "path/posix";
 import {
   getDownloadURL,
   getStorage,
   ref as storageRef,
 } from "firebase/storage";
-import { SessionIdProps } from "./type";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
 
@@ -34,7 +31,7 @@ const SessionPage = ({
   session,
   ownerid,
   campaignImage,
-}: SessionIdProps) => {
+}: SessionIdPageProps) => {
   const [value, setValue] = useState(text);
   const [isEditMode, setIsEditMode] = useState(false);
   const [user, error, loading] = useAuthState(getAuth());

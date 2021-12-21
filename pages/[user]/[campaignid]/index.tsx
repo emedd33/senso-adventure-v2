@@ -16,7 +16,7 @@ import {
 import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
 import Custom404 from "../../404";
-import { child, get, getDatabase, ref, set } from "firebase/database";
+import { child, get, getDatabase, ref } from "firebase/database";
 
 import { Params } from "next/dist/server/router";
 import BackNavigation from "../../../components/BackNavigation";

@@ -1,4 +1,3 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../../styles/index.module.css";
@@ -6,9 +5,7 @@ import BackgroundLayout from "../../components/BackgroundLayout";
 import ContentContainer from "../../components/ContentContainer";
 import { Campaign } from "../../assets/campaign.type";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
 import { child, get, getDatabase, ref } from "firebase/database";
-
 import { Params } from "next/dist/server/router";
 import {
   getDownloadURL,
@@ -16,7 +13,13 @@ import {
   ref as storageRef,
 } from "firebase/storage";
 
-const Home: NextPage = ({ campaigns, ownerId }: Params) => {
+const Home = ({
+  campaigns,
+  ownerId,
+}: {
+  campaigns: Campaign[];
+  ownerId: string;
+}) => {
   return (
     <>
       <Head>
