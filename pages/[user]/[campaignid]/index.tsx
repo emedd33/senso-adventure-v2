@@ -3,7 +3,12 @@ import { getStorage } from "firebase/storage";
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
-import content, { Campaign, Session } from "../../../assets/campaign.type";
+import {
+  Campaign,
+  FirebaseUser,
+  FirebaseUserItems,
+  Session,
+} from "../../../assets/campaign.type";
 import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
 import Custom404 from "../../404";
@@ -12,7 +17,7 @@ import { useMemo, useState } from "react";
 import { Params } from "next/dist/server/router";
 import BackNavigation from "../../../components/BackNavigation";
 
-const CampaignPage = ({ campaign }: Params) => {
+const CampaignPage = ({ campaign, ownerId }: Params) => {
   const getTextSnippet = (text: string, start: number = 0, end?: number) => {
     return text.substring(start, end ? end : text.length);
   };
@@ -31,12 +36,12 @@ const CampaignPage = ({ campaign }: Params) => {
       <BackgroundLayout backgroundImageUrl={campaign.image}>
         <ContentContainer>
           <h1 className={styles.title}>{campaign.title}</h1>
-          <BackNavigation href={`/`} />
+          <BackNavigation href={`/${ownerId}`} />
           {campaign.sessions?.map((session: Session) => {
             return (
               <Link
                 key={session.id}
-                href={`/campaign/${campaign.id}/session/${session.id}`}
+                href={`/${ownerId}/${campaign.id}/session/${session.id}`}
                 passHref={true}
               >
                 <a className={styles.sessionContainer}>
@@ -74,11 +79,26 @@ const CampaignPage = ({ campaign }: Params) => {
 
 export async function getStaticPaths() {
   // Creates all the static paths from the database instances
-  const campaignPaths = await get(child(ref(getDatabase()), `campaign`)).then(
-    (snapshot) => (snapshot.exists() ? Object.keys(snapshot.val()) : null)
-  );
+  const allPaths = await get(child(ref(getDatabase()), `users`))
+    .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
+    .then((users: FirebaseUser) => {
+      return Object.entries(users)
+        .map(([id, users]: [string, FirebaseUserItems]) => {
+          if (users.campaigns) {
+            return Object.keys(users.campaigns).map((campaignid: string) => {
+              return { user: id, campaignid: campaignid };
+            });
+          }
+          return [{ user: id, campaignid: undefined }];
+        })
+        .flat()
+        .filter((path) => path.user && path.campaignid);
+    });
+
   return {
-    paths: campaignPaths?.map((path) => ({ params: { campaignid: path } })),
+    paths: allPaths?.map((paths) => ({
+      params: { user: paths.user, campaignid: paths.campaignid },
+    })),
     fallback: true,
   };
 }
@@ -86,8 +106,11 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }: Params) {
   // fetches the campaign data pased on the path
   const campaignId = params.campaignid;
+
+  const ownerId = params.user;
+
   const campaign = await get(
-    child(ref(getDatabase()), `campaign/${campaignId}`)
+    child(ref(getDatabase()), `users/${ownerId}/campaigns/${campaignId}`)
   )
     .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
     .then((res) => {
@@ -107,7 +130,7 @@ export async function getStaticProps({ params }: Params) {
     })
     .catch((error) => console.error(error));
   return {
-    props: { campaign: campaign }, // will be passed to the page component as props
+    props: { campaign: campaign, ownerId: ownerId }, // will be passed to the page component as props
   };
 }
 export default CampaignPage;

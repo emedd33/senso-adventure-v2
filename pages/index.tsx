@@ -15,8 +15,11 @@ import {
   getStorage,
   ref as storageRef,
 } from "firebase/storage";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { getAuth } from "firebase/auth";
 
-const Home: NextPage = ({ campaigns }: Params) => {
+const Home: NextPage = () => {
+  const [user, loading, error] = useAuthState(getAuth());
   return (
     <>
       <Head>
@@ -25,55 +28,18 @@ const Home: NextPage = ({ campaigns }: Params) => {
       </Head>
       <BackgroundLayout>
         <ContentContainer>
-          <div className={styles.container}>
-            {campaigns.map((campaign: Campaign) => {
-              return (
-                <Link key={campaign.id} href={`/campaign/${campaign.id}`}>
-                  <a key={campaign.id} className={styles.campaignContainer}>
-                    {campaign.image ? (
-                      <Image
-                        src={campaign.image}
-                        alt="Campaign picture"
-                        layout="fill"
-                        objectFit="cover"
-                        priority={true}
-                      />
-                    ) : null}
-                    <h1 className={styles.campaignTitle}>{campaign.title}</h1>
-                  </a>
-                </Link>
-              );
-            })}
-          </div>
+          <div className={styles.container}></div>
+          {user ? (
+            <Link href={`/${user?.uid}`}>
+              <a>
+                <button>My campaigns</button>
+              </a>
+            </Link>
+          ) : null}
         </ContentContainer>
       </BackgroundLayout>
     </>
   );
 };
-
-export async function getStaticProps({ params }: Params) {
-  const storage = getStorage();
-  const campaigns = await get(child(ref(getDatabase()), `campaign/`))
-    .then((snapshot) =>
-      Promise.all(
-        Object.keys(snapshot.val()).map((id) =>
-          getDownloadURL(storageRef(storage, `images/${id}.jpg`)).then(
-            (url) => {
-              return {
-                ...snapshot.val()[id],
-                id: id,
-                image: url,
-              };
-            }
-          )
-        )
-      )
-    )
-    .catch((error) => console.error(error));
-
-  return {
-    props: { campaigns: campaigns }, // will be passed to the page component as props
-  };
-}
 
 export default Home;
