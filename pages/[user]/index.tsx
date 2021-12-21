@@ -3,7 +3,11 @@ import Image from "next/image";
 import styles from "../../styles/index.module.css";
 import BackgroundLayout from "../../components/BackgroundLayout";
 import ContentContainer from "../../components/ContentContainer";
-import { Campaign } from "../../assets/campaign.type";
+import {
+  Campaign,
+  FirebaseCampaign,
+  FirebaseCampaignItems,
+} from "../../assets/campaign.type";
 import Link from "next/link";
 import { child, get, getDatabase, ref } from "firebase/database";
 import { Params } from "next/dist/server/router";
@@ -29,7 +33,7 @@ const Home = ({
       <BackgroundLayout>
         <ContentContainer>
           <div className={styles.container}>
-            {campaigns.map((campaign: Campaign) => {
+            {campaigns?.map((campaign: Campaign) => {
               return (
                 <Link key={campaign.id} href={`/${ownerId}/${campaign.id}`}>
                   <a key={campaign.id} className={styles.campaignContainer}>
@@ -57,9 +61,8 @@ const Home = ({
 export async function getStaticPaths() {
   // Creates all the static paths from the database instances
   const userPaths = await get(child(ref(getDatabase()), `users`)).then(
-    (snapshot) => (snapshot.exists() ? Object.keys(snapshot.val()) : null)
+    (snapshot) => (snapshot.exists() ? Object.keys(snapshot.val()) : [])
   );
-
   return {
     paths: userPaths?.map((path) => ({ params: { user: path } })),
     fallback: true,
@@ -73,26 +76,26 @@ export async function getStaticProps({ params }: Params) {
   const campaigns = await get(
     child(ref(getDatabase()), `users/${ownerId}/campaigns/`)
   )
-    .then((snapshot) =>
+    .then((snapshot) => snapshot.val())
+    .then((campagins: FirebaseCampaign) =>
       Promise.all(
-        Object.keys(snapshot.val()).map((campaignId: string) =>
-          getDownloadURL(
-            storageRef(
-              storage,
-              `users/${ownerId}/campaigns/${campaignId}/${campaignId}.jpg`
-            )
-          ).then((url) => {
-            return {
-              ...snapshot.val()[campaignId],
-              id: campaignId,
-              image: url,
-            };
+        Object.entries(campagins).map(
+          async ([campaignid, campaign]: [string, FirebaseCampaignItems]) => ({
+            id: campaignid,
+            title: campaign.title,
+            image: campaign.image
+              ? await getDownloadURL(
+                  storageRef(
+                    storage,
+                    `/users/${ownerId}/campaigns/${campaignid}/${campaign.image}`
+                  )
+                )
+              : "",
           })
         )
       )
     )
-    .catch((error) => console.error(error));
-
+    .catch((err) => console.error(err));
   return {
     props: { campaigns: campaigns, ownerId: ownerId }, // will be passed to the page component as props
   };
