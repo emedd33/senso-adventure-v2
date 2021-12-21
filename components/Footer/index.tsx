@@ -18,12 +18,14 @@ const Footer: React.FC<FooterProps> = () => {
       >
         <span style={{ marginRight: "1rem" }}>@2022 Eskild Ruud Mageli</span>
         <Link href="https://github.com/emedd33/senso-adventure-v2/">
-          <Image
-            src="/images/github.png"
-            width={30}
-            height={30}
-            className={styles.githubLogo}
-          />
+          <a>
+            <Image
+              src="/images/github.png"
+              width={30}
+              height={30}
+              className={styles.githubLogo}
+            />
+          </a>
         </Link>
       </span>
       <div></div>
