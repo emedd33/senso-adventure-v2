@@ -1,5 +1,9 @@
 import Head from "next/head";
-import { getStorage } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+} from "firebase/storage";
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
@@ -13,11 +17,19 @@ import { text } from "../../../assets/loremIpsum";
 import Link from "next/link";
 import Custom404 from "../../404";
 import { child, get, getDatabase, ref, set } from "firebase/database";
-import { useMemo, useState } from "react";
+
 import { Params } from "next/dist/server/router";
 import BackNavigation from "../../../components/BackNavigation";
 
-const CampaignPage = ({ campaign, ownerId }: Params) => {
+const CampaignPage = ({
+  campaign,
+  ownerid,
+  campaignImage,
+}: {
+  campaign: Campaign;
+  ownerid: string;
+  campaignImage: string;
+}) => {
   const getTextSnippet = (text: string, start: number = 0, end?: number) => {
     return text.substring(start, end ? end : text.length);
   };
@@ -33,15 +45,15 @@ const CampaignPage = ({ campaign, ownerId }: Params) => {
         <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
 
-      <BackgroundLayout backgroundImageUrl={campaign.image}>
+      <BackgroundLayout backgroundImageUrl={campaignImage}>
         <ContentContainer>
           <h1 className={styles.title}>{campaign.title}</h1>
-          <BackNavigation href={`/${ownerId}`} />
+          <BackNavigation href={`/${ownerid}`} />
           {campaign.sessions?.map((session: Session) => {
             return (
               <Link
                 key={session.id}
-                href={`/${ownerId}/${campaign.id}/session/${session.id}`}
+                href={`/${ownerid}/${campaign.id}/${session.id}`}
                 passHref={true}
               >
                 <a className={styles.sessionContainer}>
@@ -105,20 +117,20 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: Params) {
   // fetches the campaign data pased on the path
-  const campaignId = params.campaignid;
+  const storage = getStorage();
+  const campaignid = params.campaignid;
+  const ownerid = params.user;
 
-  const ownerId = params.user;
-
+  // Fetches the campaign in SSR
   const campaign = await get(
-    child(ref(getDatabase()), `users/${ownerId}/campaigns/${campaignId}`)
+    child(ref(getDatabase()), `users/${ownerid}/campaigns/${campaignid}`)
   )
     .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
     .then((res) => {
-      if (res && campaignId) {
+      if (res && campaignid) {
         return {
           ...res,
-          id: campaignId,
-          image: `/images/${campaignId}.jpg`,
+          id: campaignid,
           sessions: res.sessions
             ? Object.keys(res.sessions).map((id) => ({
                 ...res.sessions[id],
@@ -129,8 +141,21 @@ export async function getStaticProps({ params }: Params) {
       }
     })
     .catch((error) => console.error(error));
+
+  // Fetches url for background image in SSR
+  const campaignImage = await getDownloadURL(
+    storageRef(
+      storage,
+      `users/${ownerid}/campaigns/${campaignid}/${campaign.image}`
+    )
+  ).catch(() => "");
+
   return {
-    props: { campaign: campaign, ownerId: ownerId }, // will be passed to the page component as props
+    props: {
+      campaign: campaign,
+      ownerid: ownerid,
+      campaignImage: campaignImage,
+    }, // will be passed to the page component as props
   };
 }
 export default CampaignPage;

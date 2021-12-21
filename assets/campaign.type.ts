@@ -6,7 +6,7 @@ export interface FirebaseUser {
 }
 export interface FirebaseCampaignItems {
   title: string;
-  image: any;
+  image: string;
   sessions?: FirebaseSession[];
 }
 export interface FirebaseCampaign {
@@ -24,7 +24,7 @@ export interface FirebaseSession {
 export interface Campaign {
   id: string;
   title: string;
-  image: any;
+  image: string;
   sessions?: Session[];
 }
 

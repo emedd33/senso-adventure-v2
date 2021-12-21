@@ -19,9 +19,20 @@ import {
   FirebaseUserItems,
 } from "../../../../assets/campaign.type";
 import path from "path/posix";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+} from "firebase/storage";
+import { SessionIdProps } from "./type";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-const SessionPage = ({ campaignId, session, ownerId }: Params) => {
+const SessionPage = ({
+  campaignId,
+  session,
+  ownerId,
+  campaignImage,
+}: SessionIdProps) => {
   const [value, setValue] = useState(text);
   const [isEditMode, setIsEditMode] = useState(false);
   if (!session || !campaignId) {
@@ -33,9 +44,9 @@ const SessionPage = ({ campaignId, session, ownerId }: Params) => {
         <title>{session.title}</title>
         <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
-      <BackgroundLayout backgroundImageUrl={`/images/${campaignId}.jpg`}>
+      <BackgroundLayout backgroundImageUrl={campaignImage}>
         <ContentContainer>
-          <BackNavigation href={`/campaign/${campaignId}`} />
+          <BackNavigation href={`/${ownerId}/${campaignId}`} />
           <div className={styled.container}>
             <h1 className={styles.title}>{session?.title}</h1>
             <h2 className={styles.subtitle}>{session?.subTitle}</h2>
@@ -111,23 +122,40 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: any) {
+  const storage = getStorage();
+
   // fetches the campaign data pased on the path
   const campaignid = params.campaignid;
   const sessionid = params.sessionid;
   const ownerid = params.user;
+  const campaignImageId = await get(
+    child(ref(getDatabase()), `/users/${ownerid}/campaigns/${campaignid}/image`)
+  )
+    .then((snapshot) => snapshot.val())
+    .catch((error) => console.error(error));
+
   const session = await get(
     child(
       ref(getDatabase()),
       `/users/${ownerid}/campaigns/${campaignid}/sessions/${sessionid}`
     )
   )
-    .then((snapshot) =>
-      snapshot.exists() ? { ...snapshot.val(), id: snapshot.key } : null
-    )
+    .then((snapshot) => snapshot.val())
     .catch((error) => console.error(error));
-
+  // Fetches url for background image in SSR
+  const campaignImage = await getDownloadURL(
+    storageRef(
+      storage,
+      `users/${ownerid}/campaigns/${campaignid}/${campaignImageId}`
+    )
+  ).catch(() => "");
   return {
-    props: { campaignId: campaignid, session: session, ownerid: params.user }, // will be passed to the page component as props
+    props: {
+      campaignId: campaignid,
+      session: session,
+      ownerid: params.user,
+      campaignImage: campaignImage,
+    }, // will be passed to the page component as props
   };
 }
 
