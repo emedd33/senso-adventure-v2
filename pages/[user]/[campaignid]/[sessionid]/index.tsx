@@ -8,7 +8,7 @@ import { text } from "../../../../assets/loremIpsum";
 import BackNavigation from "../../../../components/BackNavigation";
 import { child, get, getDatabase, ref } from "firebase/database";
 import { Params } from "next/dist/server/router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { quillFormats, quillModules } from "../../../../assets/quill";
 import "react-quill/dist/quill.snow.css";
@@ -25,16 +25,22 @@ import {
   ref as storageRef,
 } from "firebase/storage";
 import { SessionIdProps } from "./type";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { getAuth } from "firebase/auth";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({
   campaignId,
   session,
-  ownerId,
+  ownerid,
   campaignImage,
 }: SessionIdProps) => {
   const [value, setValue] = useState(text);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [user, error, loading] = useAuthState(getAuth());
+  const [isOwner, setIsOwner] = useState(false);
+
+  useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
   if (!session || !campaignId) {
     return <Custom404 />;
   }
@@ -46,8 +52,13 @@ const SessionPage = ({
       </Head>
       <BackgroundLayout backgroundImageUrl={campaignImage}>
         <ContentContainer>
-          <BackNavigation href={`/${ownerId}/${campaignId}`} />
+          <BackNavigation href={`/${ownerid}/${campaignId}`} />
           <div className={styled.container}>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              {isOwner ? (
+                <button onClick={() => setIsEditMode(!isEditMode)}>Edit</button>
+              ) : null}
+            </div>
             <h1 className={styles.title}>{session?.title}</h1>
             <h2 className={styles.subtitle}>{session?.subTitle}</h2>
             <div
@@ -65,7 +76,6 @@ const SessionPage = ({
               ></ReactQuill>
             </div>
           </div>
-          <button onClick={() => setIsEditMode(!isEditMode)}>Edit</button>
         </ContentContainer>
       </BackgroundLayout>
     </>
@@ -128,6 +138,7 @@ export async function getStaticProps({ params }: any) {
   const campaignid = params.campaignid;
   const sessionid = params.sessionid;
   const ownerid = params.user;
+
   const campaignImageId = await get(
     child(ref(getDatabase()), `/users/${ownerid}/campaigns/${campaignid}/image`)
   )
@@ -153,7 +164,7 @@ export async function getStaticProps({ params }: any) {
     props: {
       campaignId: campaignid,
       session: session,
-      ownerid: params.user,
+      ownerid: ownerid,
       campaignImage: campaignImage,
     }, // will be passed to the page component as props
   };

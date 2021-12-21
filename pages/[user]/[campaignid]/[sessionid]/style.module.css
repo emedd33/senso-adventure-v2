@@ -27,3 +27,8 @@
   border: none;
   background-color: #face8b;
 }
+
+.header {
+  display: grid;
+  grid-template-columns: 80% 2rem;
+}

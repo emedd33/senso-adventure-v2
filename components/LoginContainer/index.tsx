@@ -74,7 +74,8 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
         >
           Register new account?
         </button>
-        <button className={style.registerBoxText}>Forgotten password?</button>
+        <></>
+        {/* <button className={style.registerBoxText}>Forgotten password?</button> */}
       </div>
 
       <button
@@ -107,7 +108,7 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
           src="/icons/google.svg"
           width={"18px"}
           height={"18px"}
-          style={{ marginRight: "24px" }}
+          style={{ marginRight: "24px", color: "black" }}
         />
         Sign in with Google
       </button>

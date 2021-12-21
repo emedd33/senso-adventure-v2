@@ -17,16 +17,18 @@ const Register: React.FC<RegisterProp> = ({ closeModal, setIsRegistering }) => {
   const [registerPassword2, setRegisterPassword2] = useState("");
   const register = () => {
     if (!registerEmail) {
-      setErrorMessage("Fill out email");
+      return setErrorMessage("Fill out email");
     }
     if (!registerPassword1) {
-      setErrorMessage("Fill out password");
+      return setErrorMessage("Fill out password");
     }
 
     if (registerPassword2 !== registerPassword1) {
-      setErrorMessage("Passwords are not equal");
+      return setErrorMessage("Passwords are not equal");
     }
-    if (!errorMessage) return;
+    if (!errorMessage) {
+      setErrorMessage("");
+    }
 
     const auth = getAuth();
 

@@ -32,6 +32,7 @@
   font-size: 0.7rem;
   box-shadow: none;
   -webkit-box-shadow: none;
+  color: black;
   background-color: transparent;
 }
 .registerBoxText:hover {
@@ -53,4 +54,5 @@
   align-items: center;
   height: 40px;
   width: 200px;
+  color: black;
 }

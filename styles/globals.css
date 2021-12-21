@@ -29,6 +29,8 @@ button {
   border: none;
   font-family: unkempt;
   text-align: center;
+  background-color: black;
+  color: #face8b;
   text-decoration: none;
   display: inline-block;
   cursor: pointer;
