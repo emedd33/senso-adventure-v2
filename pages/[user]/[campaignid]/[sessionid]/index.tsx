@@ -6,7 +6,7 @@ import styled from "./style.module.css";
 import Custom404 from "../../../404";
 import { text } from "../../../../assets/loremIpsum";
 import BackNavigation from "../../../../components/BackNavigation";
-import { child, get, getDatabase, ref } from "firebase/database";
+import { child, get, getDatabase, ref, set } from "firebase/database";
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { quillFormats, quillModules } from "../../../../assets/quill";
@@ -27,6 +27,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
 import Loader from "react-loader-spinner";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({
   campaignId,
@@ -38,6 +40,7 @@ const SessionPage = ({
   const [sessionContent, setSessionContent] = useState("");
   const [sessionTitle, setSessionTitle] = useState(session.title);
   const [sessionSubTitle, setSessionSubTitle] = useState(session.subTitle);
+  const [sessionDate, setSessionDate] = useState(new Date(session.date));
   const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [user, error, loading] = useAuthState(getAuth());
@@ -78,9 +81,24 @@ const SessionPage = ({
           `users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}.txt`
         ),
         sessionContent
-      ).then((snapshot) => {
-        console.log("Uploaded a raw string!");
-      });
+      )
+        .then(() => console.log("Session updated in Firebase Storage"))
+        .catch((err) => console.error(err));
+      set(
+        ref(
+          getDatabase(),
+          `/users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}`
+        ),
+        {
+          title: sessionTitle,
+          subTitle: sessionSubTitle,
+          date: sessionDate.toLocaleDateString(),
+        }
+      )
+        .then(() => console.log("Session updated in Firebase Database"))
+        .catch((error) => {
+          console.error(error);
+        });
     }
   };
 
@@ -106,53 +124,79 @@ const SessionPage = ({
             className={styled.container}
             onKeyDown={(event) => handleKeyDown(event)}
           >
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              {isOwner ? (
-                <button onClick={() => setIsEditMode(!isEditMode)}>Edit</button>
-              ) : null}
+            <div style={{ gridColumn: "1/2" }}>
+              {isEditMode ? (
+                <DatePicker
+                  selected={sessionDate}
+                  onChange={(date: Date) => setSessionDate(date)}
+                />
+              ) : (
+                <h4 className={styles.date} suppressHydrationWarning>
+                  {sessionDate.toLocaleDateString()}
+                </h4>
+              )}
             </div>
+            <div style={{ gridColumn: "4/5" }}>
+              {isEditMode ? (
+                <>
+                  <label
+                    htmlFor="title-container"
+                    style={{ marginLeft: "1rem" }}
+                  >
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title-container"
+                    placeholder="Write a fitting title"
+                    value={sessionTitle}
+                    onChange={(event) => setSessionTitle(event.target.value)}
+                  />
+                </>
+              ) : (
+                <h1 className={styles.title}>
+                  {sessionTitle ? sessionTitle : session.id}
+                </h1>
+              )}
+            </div>
+            {isOwner ? (
+              <button
+                onClick={() => setIsEditMode(!isEditMode)}
+                style={{
+                  gridColumn: "7/8",
+                  height: "2rem",
+                }}
+              >
+                Edit
+              </button>
+            ) : null}
 
-            {isEditMode ? (
-              <>
-                <label htmlFor="title-container" style={{ marginLeft: "1rem" }}>
-                  Title
-                </label>
-                <input
-                  type="text"
-                  id="title-container"
-                  placeholder="Write a fitting title"
-                  value={sessionTitle}
-                  onChange={(event) => setSessionTitle(event.target.value)}
-                />
-              </>
-            ) : (
-              <h1 className={styles.title}>
-                {sessionTitle ? sessionTitle : session.id}
-              </h1>
-            )}
-            {isEditMode ? (
-              <>
-                <label
-                  htmlFor="subtitle-container"
-                  style={{ marginLeft: "1rem" }}
-                >
-                  Subtitle
-                </label>
-                <input
-                  type="text"
-                  id="subtitle-container"
-                  placeholder="Write a fitting subtile"
-                  value={sessionSubTitle}
-                  onChange={(event) => setSessionSubTitle(event.target.value)}
-                />
-              </>
-            ) : (
-              <h2 className={styles.subtitle}>{sessionSubTitle}</h2>
-            )}
+            <div style={{ gridColumn: "4/5" }}>
+              {isEditMode ? (
+                <>
+                  <label
+                    htmlFor="subtitle-container"
+                    style={{ marginLeft: "1rem" }}
+                  >
+                    Subtitle
+                  </label>
+                  <input
+                    type="text"
+                    id="subtitle-container"
+                    placeholder="Write a fitting subtile"
+                    value={sessionSubTitle}
+                    onChange={(event) => setSessionSubTitle(event.target.value)}
+                  />
+                </>
+              ) : (
+                <h2 className={styles.subtitle}>{sessionSubTitle}</h2>
+              )}
+            </div>
             <div
               className={
                 isEditMode ? styles.quillContainer : styles.quillContainerRead
               }
+              style={{ gridColumn: "1/8" }}
             >
               {isLoading ? (
                 <Loader type="Oval" color="#000" height={40} width={40} />
@@ -168,7 +212,11 @@ const SessionPage = ({
                 ></ReactQuill>
               )}
             </div>
-            {isEditMode ? <button onClick={handleSave}>Save</button> : null}
+            {isEditMode ? (
+              <button onClick={handleSave} style={{ gridColumn: "1/2" }}>
+                Save
+              </button>
+            ) : null}
           </div>
         </ContentContainer>
       </BackgroundLayout>

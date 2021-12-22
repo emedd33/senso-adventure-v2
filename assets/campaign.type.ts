@@ -29,6 +29,7 @@ export interface Campaign {
 }
 
 export interface Session {
+  date: string | number | Date;
   id: string;
   title: string;
   subTitle: string;
