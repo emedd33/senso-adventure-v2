@@ -33,6 +33,7 @@ export interface Session {
   id: string;
   title: string;
   subTitle: string;
+  snippet: string;
 }
 
 export type SessionIdPageProps = {
@@ -40,4 +41,5 @@ export type SessionIdPageProps = {
   session: Session;
   ownerid: string;
   campaignImage: string;
+  content: string;
 };

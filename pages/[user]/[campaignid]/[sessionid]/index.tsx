@@ -4,19 +4,11 @@ import BackgroundLayout from "../../../../components/BackgroundLayout";
 import ContentContainer from "../../../../components/ContentContainer";
 import styled from "./style.module.css";
 import Custom404 from "../../../404";
-import { text } from "../../../../assets/loremIpsum";
 import BackNavigation from "../../../../components/BackNavigation";
 import { child, get, getDatabase, ref, set } from "firebase/database";
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { quillFormats, quillModules } from "../../../../assets/quill";
-import "react-quill/dist/quill.snow.css";
-import {
-  FirebaseCampaignItems,
-  FirebaseUser,
-  FirebaseUserItems,
-  SessionIdPageProps,
-} from "../../../../assets/campaign.type";
+import { SessionIdPageProps } from "../../../../assets/campaign.type";
 import {
   getDownloadURL,
   getStorage,
@@ -26,52 +18,44 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
 import Loader from "react-loader-spinner";
-
 import DatePicker from "react-datepicker";
+import "quill/dist/quill.snow.css"; // Add css for snow theme
 import "react-datepicker/dist/react-datepicker.css";
+import { cleanHtmlString } from "../../../../utils/stringUtils";
+import { quillFormats, quillModules } from "../../../../assets/quill";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({
   campaignId,
   session,
   ownerid,
   campaignImage,
+  content,
 }: SessionIdPageProps) => {
   const storage = getStorage();
-  const [sessionContent, setSessionContent] = useState("");
+  const [sessionContent, setSessionContent] = useState(content);
   const [sessionTitle, setSessionTitle] = useState(session.title);
   const [sessionSubTitle, setSessionSubTitle] = useState(session.subTitle);
   const [sessionDate, setSessionDate] = useState(new Date(session.date));
   const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [user, error, loading] = useAuthState(getAuth());
-
+  const [modules, setModules] = useState<any>({ toolbar: [] });
+  const [formats, setFormats] = useState<any>([]);
   const [isOwner, setIsOwner] = useState(false);
-
+  useEffect(
+    () => setModules(isEditMode ? quillModules : { toolbar: [] }),
+    [isEditMode]
+  );
+  useEffect(
+    () => setFormats(isEditMode ? quillFormats : [isEditMode]),
+    [isEditMode]
+  );
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
 
   useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
-  useMemo(() => {
-    setIsLoading(true);
-    getDownloadURL(
-      storageRef(
-        storage,
-        `users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}.txt`
-      )
-    ).then((url) => {
-      fetch(url, {
-        credentials: "same-origin",
-      })
-        .then((res) => res.text())
-        .then((res) => {
-          setSessionContent(res);
-        })
-        .finally(() => setIsLoading(false))
-        .catch((err) => "");
-    });
-  }, [session, campaignId, ownerid, storage]);
 
   const handleSave = () => {
     if (isEditMode && isOwner) {
@@ -93,6 +77,7 @@ const SessionPage = ({
           title: sessionTitle,
           subTitle: sessionSubTitle,
           date: sessionDate.toLocaleDateString(),
+          snippet: cleanHtmlString(sessionContent),
         }
       )
         .then(() => console.log("Session updated in Firebase Database"))
@@ -202,14 +187,12 @@ const SessionPage = ({
                 <Loader type="Oval" color="#000" height={40} width={40} />
               ) : (
                 <ReactQuill
+                  readOnly={!isEditMode}
                   theme="snow"
                   value={sessionContent}
-                  onKeyDown={(event) => handleKeyDown(event)}
-                  onChange={setSessionContent}
-                  modules={isEditMode ? quillModules : { toolbar: [] }}
-                  formats={isEditMode ? quillFormats : []}
-                  readOnly={!isEditMode}
-                ></ReactQuill>
+                  modules={modules}
+                  onChange={(val) => setSessionContent(val)}
+                />
               )}
             </div>
             {isEditMode ? (
@@ -254,12 +237,27 @@ export async function getServerSideProps({ params }: any) {
     )
   ).catch((err) => console.log(err));
 
+  const sessionContent = await getDownloadURL(
+    storageRef(
+      storage,
+      `users/${ownerid}/campaigns/${campaignid}/sessions/${sessionid}.txt`
+    )
+  )
+    .then((url) =>
+      fetch(url, {
+        credentials: "same-origin",
+      })
+        .then((res) => res.text())
+        .catch((err) => console.error(err))
+    )
+    .catch((err) => console.error(err));
   return {
     props: {
       campaignId: campaignid,
       session: { ...session, id: sessionid },
       ownerid: ownerid,
       campaignImage: campaignImage,
+      content: sessionContent,
     }, // will be passed to the page component as props
   };
 }
