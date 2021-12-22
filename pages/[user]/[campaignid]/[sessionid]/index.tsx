@@ -50,7 +50,7 @@ const SessionPage = ({
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  });
 
   useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
   useMemo(() => {
@@ -71,7 +71,7 @@ const SessionPage = ({
         .finally(() => setIsLoading(false))
         .catch((err) => "");
     });
-  }, [session, campaignId, ownerid]);
+  }, [session, campaignId, ownerid, storage]);
 
   const handleSave = () => {
     if (isEditMode && isOwner) {
@@ -224,56 +224,7 @@ const SessionPage = ({
   );
 };
 
-type AllPathType = { ownerid: string; campaignid: string; sessionid: string };
-export async function getStaticPaths() {
-  // Creates all the static paths from the database instances
-  const allPaths = await get(child(ref(getDatabase()), `users`))
-    .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
-    .then((users: FirebaseUser) => {
-      return Object.entries(users)
-        .map(([ownerid, users]: [string, FirebaseUserItems]) => {
-          if (users.campaigns) {
-            return Object.entries(users.campaigns).map(
-              ([campaignid, campaign]: [string, FirebaseCampaignItems]) => {
-                if (campaign.sessions) {
-                  return Object.keys(campaign.sessions).map(
-                    (sessionid: string) => ({
-                      ownerid: ownerid,
-                      campaignid: campaignid,
-                      sessionid: sessionid,
-                    })
-                  );
-                }
-                return {
-                  ownerid: ownerid,
-                  campaignid: campaignid,
-                  sessionid: "",
-                };
-              }
-            );
-          }
-          return [{ ownerid: ownerid, campaignid: "", sessionid: "" }];
-        })
-        .flat()
-        .flat()
-        .filter(
-          (path) => path.ownerid && path.campaignid && path.sessionid
-        ) as AllPathType[];
-    });
-
-  return {
-    paths: allPaths?.map((paths: AllPathType) => ({
-      params: {
-        campaignid: paths.campaignid,
-        sessionid: paths.sessionid,
-        user: paths.ownerid,
-      },
-    })),
-    fallback: true,
-  };
-}
-
-export async function getStaticProps({ params }: any) {
+export async function getServerSideProps({ params }: any) {
   const storage = getStorage();
 
   // fetches the campaign data pased on the path

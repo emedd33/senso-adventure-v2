@@ -58,18 +58,7 @@ const Home = ({
   );
 };
 
-export async function getStaticPaths() {
-  // Creates all the static paths from the database instances
-  const userPaths = await get(child(ref(getDatabase()), `users`)).then(
-    (snapshot) => (snapshot.exists() ? Object.keys(snapshot.val()) : [])
-  );
-  return {
-    paths: userPaths?.map((path) => ({ params: { user: path } })),
-    fallback: true,
-  };
-}
-
-export async function getStaticProps({ params }: Params) {
+export async function getServerSideProps({ params }: Params) {
   const ownerId = params.user;
   const storage = getStorage();
 

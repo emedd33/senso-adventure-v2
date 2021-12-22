@@ -89,33 +89,7 @@ const CampaignPage = ({
   );
 };
 
-export async function getStaticPaths() {
-  // Creates all the static paths from the database instances
-  const allPaths = await get(child(ref(getDatabase()), `users`))
-    .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
-    .then((users: FirebaseUser) => {
-      return Object.entries(users)
-        .map(([id, users]: [string, FirebaseUserItems]) => {
-          if (users.campaigns) {
-            return Object.keys(users.campaigns).map((campaignid: string) => {
-              return { user: id, campaignid: campaignid };
-            });
-          }
-          return [{ user: id, campaignid: undefined }];
-        })
-        .flat()
-        .filter((path) => path.user && path.campaignid);
-    });
-
-  return {
-    paths: allPaths?.map((paths) => ({
-      params: { user: paths.user, campaignid: paths.campaignid },
-    })),
-    fallback: true,
-  };
-}
-
-export async function getStaticProps({ params }: Params) {
+export async function getServerSideProps({ params }: Params) {
   // fetches the campaign data pased on the path
   const storage = getStorage();
   const campaignid = params.campaignid;
