@@ -18,14 +18,20 @@
 }
 
 .quillContainer {
-  margin-bottom: 5rem;
+  margin-bottom: 1rem;
   background-color: white;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-bottom: 1rem;
 }
 
 .quillContainerRead {
-  margin-bottom: 5rem;
+  margin-bottom: 1rem;
   border: none;
   background-color: #face8b;
+  display: flex;
+  justify-content: center;
 }
 
 .header {

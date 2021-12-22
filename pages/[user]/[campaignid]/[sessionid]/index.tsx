@@ -7,7 +7,7 @@ import Custom404 from "../../../404";
 import { text } from "../../../../assets/loremIpsum";
 import BackNavigation from "../../../../components/BackNavigation";
 import { child, get, getDatabase, ref } from "firebase/database";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { quillFormats, quillModules } from "../../../../assets/quill";
 import "react-quill/dist/quill.snow.css";
@@ -21,9 +21,11 @@ import {
   getDownloadURL,
   getStorage,
   ref as storageRef,
+  uploadString,
 } from "firebase/storage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
+import Loader from "react-loader-spinner";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({
@@ -32,12 +34,62 @@ const SessionPage = ({
   ownerid,
   campaignImage,
 }: SessionIdPageProps) => {
-  const [value, setValue] = useState(text);
+  const storage = getStorage();
+  const [sessionContent, setSessionContent] = useState("");
+  const [sessionTitle, setSessionTitle] = useState(session.title);
+  const [sessionSubTitle, setSessionSubTitle] = useState(session.subTitle);
+  const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [user, error, loading] = useAuthState(getAuth());
+
   const [isOwner, setIsOwner] = useState(false);
 
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
+  useMemo(() => {
+    setIsLoading(true);
+    getDownloadURL(
+      storageRef(
+        storage,
+        `users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}.txt`
+      )
+    ).then((url) => {
+      fetch(url, {
+        credentials: "same-origin",
+      })
+        .then((res) => res.text())
+        .then((res) => {
+          setSessionContent(res);
+        })
+        .finally(() => setIsLoading(false))
+        .catch((err) => "");
+    });
+  }, [session, campaignId, ownerid]);
+
+  const handleSave = () => {
+    if (isEditMode && isOwner) {
+      uploadString(
+        storageRef(
+          storage,
+          `users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}.txt`
+        ),
+        sessionContent
+      ).then((snapshot) => {
+        console.log("Uploaded a raw string!");
+      });
+    }
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.ctrlKey && event.key === "s" && isOwner && isEditMode) {
+      event.preventDefault();
+      handleSave();
+    }
+  };
   if (!session || !campaignId) {
     return <Custom404 />;
   }
@@ -50,28 +102,73 @@ const SessionPage = ({
       <BackgroundLayout backgroundImageUrl={campaignImage}>
         <ContentContainer>
           <BackNavigation href={`/${ownerid}/${campaignId}`} />
-          <div className={styled.container}>
+          <div
+            className={styled.container}
+            onKeyDown={(event) => handleKeyDown(event)}
+          >
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               {isOwner ? (
                 <button onClick={() => setIsEditMode(!isEditMode)}>Edit</button>
               ) : null}
             </div>
-            <h1 className={styles.title}>{session?.title}</h1>
-            <h2 className={styles.subtitle}>{session?.subTitle}</h2>
+
+            {isEditMode ? (
+              <>
+                <label htmlFor="title-container" style={{ marginLeft: "1rem" }}>
+                  Title
+                </label>
+                <input
+                  type="text"
+                  id="title-container"
+                  placeholder="Write a fitting title"
+                  value={sessionTitle}
+                  onChange={(event) => setSessionTitle(event.target.value)}
+                />
+              </>
+            ) : (
+              <h1 className={styles.title}>
+                {sessionTitle ? sessionTitle : session.id}
+              </h1>
+            )}
+            {isEditMode ? (
+              <>
+                <label
+                  htmlFor="subtitle-container"
+                  style={{ marginLeft: "1rem" }}
+                >
+                  Subtitle
+                </label>
+                <input
+                  type="text"
+                  id="subtitle-container"
+                  placeholder="Write a fitting subtile"
+                  value={sessionSubTitle}
+                  onChange={(event) => setSessionSubTitle(event.target.value)}
+                />
+              </>
+            ) : (
+              <h2 className={styles.subtitle}>{sessionSubTitle}</h2>
+            )}
             <div
               className={
                 isEditMode ? styles.quillContainer : styles.quillContainerRead
               }
             >
-              <ReactQuill
-                theme="snow"
-                value={value}
-                onChange={setValue}
-                modules={isEditMode ? quillModules : { toolbar: [] }}
-                formats={isEditMode ? quillFormats : []}
-                readOnly={!isEditMode}
-              ></ReactQuill>
+              {isLoading ? (
+                <Loader type="Oval" color="#000" height={40} width={40} />
+              ) : (
+                <ReactQuill
+                  theme="snow"
+                  value={sessionContent}
+                  onKeyDown={(event) => handleKeyDown(event)}
+                  onChange={setSessionContent}
+                  modules={isEditMode ? quillModules : { toolbar: [] }}
+                  formats={isEditMode ? quillFormats : []}
+                  readOnly={!isEditMode}
+                ></ReactQuill>
+              )}
             </div>
+            {isEditMode ? <button onClick={handleSave}>Save</button> : null}
           </div>
         </ContentContainer>
       </BackgroundLayout>
@@ -156,11 +253,12 @@ export async function getStaticProps({ params }: any) {
       storage,
       `users/${ownerid}/campaigns/${campaignid}/${campaignImageId}`
     )
-  ).catch(() => "");
+  ).catch((err) => console.log(err));
+
   return {
     props: {
       campaignId: campaignid,
-      session: session,
+      session: { ...session, id: sessionid },
       ownerid: ownerid,
       campaignImage: campaignImage,
     }, // will be passed to the page component as props
