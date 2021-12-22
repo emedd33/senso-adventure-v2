@@ -5,18 +5,4 @@ module.exports = {
   images: {
     domains: ["localhost", "firebasestorage.googleapis.com"],
   },
-  async redirects() {
-    return [
-      {
-        source: "/campaign",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/campaign/:id/session",
-        destination: "/",
-        permanent: true,
-      },
-    ];
-  },
 };

@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import styles from "../../styles/index.module.css";
+import styles from "./style.module.css";
 import BackgroundLayout from "../../components/BackgroundLayout";
 import ContentContainer from "../../components/ContentContainer";
 import {

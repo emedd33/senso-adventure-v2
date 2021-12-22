@@ -8,7 +8,7 @@ const BackNavigation: React.FC<BackNavigationProp> = ({ href }) => {
     <Link href={href}>
       <a className={style.container}>
         <IoMdArrowBack />
-        <span>back</span>
+        <span style={{ color: "var(--main-color)" }}>back</span>
       </a>
     </Link>
   );

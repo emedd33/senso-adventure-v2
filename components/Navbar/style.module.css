@@ -36,12 +36,12 @@
 }
 
 .loginContainer {
-  color: #face8b;
   cursor: pointer;
   font-size: 0.8rem;
   margin-top: 0;
   display: flex;
   align-items: flex-start;
+  color: #face8b;
 }
 
 .modalContainer {
@@ -59,6 +59,7 @@
 }
 .loginTitle {
   margin: 0;
+  color: var(--main-color);
 }
 
 .registerLoginButton {

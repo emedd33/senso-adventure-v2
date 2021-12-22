@@ -4,22 +4,17 @@ import Image from "next/image";
 import styles from "../styles/index.module.css";
 import BackgroundLayout from "../components/BackgroundLayout";
 import ContentContainer from "../components/ContentContainer";
-import { Campaign } from "../assets/campaign.type";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { child, get, getDatabase, ref } from "firebase/database";
 
-import { Params } from "next/dist/server/router";
-import {
-  getDownloadURL,
-  getStorage,
-  ref as storageRef,
-} from "firebase/storage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
   const [user, loading, error] = useAuthState(getAuth());
+  const router = useRouter();
+  if (user) {
+    router.push(`/${user.uid}`);
+  }
   return (
     <>
       <Head>
@@ -28,14 +23,18 @@ const Home: NextPage = () => {
       </Head>
       <BackgroundLayout>
         <ContentContainer>
-          <div className={styles.container}></div>
-          {user ? (
-            <Link href={`/${user?.uid}`}>
-              <a>
-                <button>My campaigns</button>
-              </a>
-            </Link>
-          ) : null}
+          <div className={styles.container}>
+            <div className={styles.campaignContainer}>
+              <Image
+                src={"/images/campfire.jpg"}
+                alt="Campaign picture"
+                layout="fill"
+                objectFit="cover"
+                priority={true}
+              />
+              <h1 className={styles.title}>A blog for Dnd sessions</h1>
+            </div>
+          </div>
         </ContentContainer>
       </BackgroundLayout>
     </>
