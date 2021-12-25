@@ -145,7 +145,7 @@ export const dispatchDiscordPublish = async (
   };
 
   // Post reqiest to discord
-  await fetch(webhook, {
+  await fetch("webhook", {
     method: "POST",
     mode: "cors",
     cache: "no-cache",

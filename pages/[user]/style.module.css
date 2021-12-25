@@ -1,10 +1,11 @@
 .container {
-  display: grid;
-  grid-template-columns: minmax(min-content, max-content);
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  justify-items: center;
+  justify-content: flex-start;
   z-index: 0;
 }
+
 .campaignContainer {
   position: relative;
   height: 20rem;
@@ -16,9 +17,11 @@
   cursor: pointer;
   opacity: 0.9;
 }
+
 .campaignContainer:hover {
   opacity: 1;
 }
+
 .campaignContainer:active {
   transform: scale(0.98);
   /* Scaling button to 0.98 to its original size */

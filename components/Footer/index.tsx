@@ -25,6 +25,7 @@ const Footer: React.FC<FooterProps> = () => {
               src="/images/github.png"
               width={30}
               height={30}
+              alt="github icon"
               className={styles.githubLogo}
             />
           </a>

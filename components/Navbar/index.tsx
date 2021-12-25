@@ -56,7 +56,12 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
           <div className={styles.modalContainer}>
             <div className={styles.modalHeader}>
               <h2 style={{ textAlign: "center" }}>Senso Adventure</h2>
-              <Image src="/icons/dice.png" width={30} height={30} />
+              <Image
+                src="/icons/dice.png"
+                width={30}
+                height={30}
+                alt="Site icon"
+              />
             </div>
             {user ? (
               <button onClick={logout} style={{ color: "red" }}>

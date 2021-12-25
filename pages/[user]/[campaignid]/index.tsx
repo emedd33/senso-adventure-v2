@@ -23,6 +23,8 @@ import {
   getCampaignImageById,
   getSessionsById,
 } from "../../../utils/campaignIdUtils";
+import { toast } from "react-toastify";
+import { toastObject } from "../../../assets/toast";
 
 const CampaignPage = ({
   campaignid,
@@ -57,7 +59,7 @@ const CampaignPage = ({
         setCampaignImage(url);
       })
       .catch((err) => console.error(err));
-  }, [campaignid]);
+  }, [ownerid, campaignid]);
 
   // Create new Session
   const createNewSession = () => {
@@ -65,6 +67,7 @@ const CampaignPage = ({
     if (sessions) {
       dispatchNewSession(ownerid, campaignid, sessions)
         .then((newSessionId) => {
+          toast.success("Created new session", toastObject);
           router.push(`/${ownerid}/${campaignid}/${newSessionId}`);
         })
         .catch((err) => console.error(err));
@@ -109,7 +112,7 @@ const CampaignPage = ({
                     width: "100%",
                   }}
                 >
-                  <button onClick={createNewSession}>new session</button>
+                  <button onClick={createNewSession}>New session</button>
                 </div>
               </div>
             ) : null}

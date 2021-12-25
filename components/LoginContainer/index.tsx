@@ -6,6 +6,7 @@ import {
   dispatchLoginWithEmail,
   dispatchLoginWithGoogle,
 } from "../../firebase/login";
+import Image from "next/image";
 
 type LoginProp = {
   closeModal?: () => void;
@@ -104,13 +105,15 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
         </svg>
       </div>
       <button className={style.googleButton} onClick={loginWithGoogle}>
-        <img
+        <Image
           src="/icons/google.svg"
           width={"18px"}
           height={"18px"}
-          style={{ marginRight: "24px", color: "black" }}
+          alt="Google button"
         />
-        Sign in with Google
+        <span style={{ marginRight: "24px", color: "black" }}>
+          Sign in with Google{" "}
+        </span>
       </button>
     </div>
   );

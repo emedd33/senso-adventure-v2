@@ -21,6 +21,7 @@ import Loader from "react-loader-spinner";
 import DatePicker from "react-datepicker";
 import "quill/dist/quill.snow.css"; // Add css for snow theme
 import "react-datepicker/dist/react-datepicker.css";
+import "react-toastify/dist/ReactToastify.css";
 import { createSessionSnippet } from "../../../../utils/stringUtils";
 import { quillFormats, quillModules } from "../../../../assets/quill";
 import {
@@ -29,6 +30,8 @@ import {
   getContentById,
 } from "../../../../utils/sessionIdUtils";
 import { getCampaignImageById } from "../../../../utils/campaignIdUtils";
+import { toast, ToastContainer } from "react-toastify";
+import { toastObject } from "../../../../assets/toast";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({
   campaignId,
@@ -45,7 +48,7 @@ const SessionPage = ({
   const [isOwner, setIsOwner] = useState(false);
   const [campaignImage, setCampaignImage] = useState<string>();
 
-  const [sessionIsPublished, setSessionIsPublished] = useState<boolean>();
+  const [sessionIsPublished, setSessionIsPublished] = useState<boolean>(true);
   const [sessionContent, setSessionContent] = useState<string>();
   const [sessionTitle, setSessionTitle] = useState<string>(title);
   const [sessionSubTitle, setSessionSubTitle] = useState<string>("");
@@ -69,13 +72,17 @@ const SessionPage = ({
     setIsLoading(true);
     getContentById(ownerid, campaignId, sessionid)
       .then((res) => {
-        setSessionDate(new Date(res.session.date));
-        setSessionSubTitle(res.session.subTitle);
-        setSessionIsPublished(res.session.isPublished);
-        setSessionContent(res.sessionContent);
+        if (res.session) {
+          setSessionDate(
+            res.session.date ? new Date(res.session.date) : new Date()
+          );
+          setSessionSubTitle(res.session.subTitle);
+          setSessionIsPublished(res.session.isPublished);
+          setSessionContent(res.sessionContent);
+        }
       })
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [ownerid, campaignId, sessionid]);
 
   // Get Campaign Image
   useMemo(() => {
@@ -85,10 +92,11 @@ const SessionPage = ({
         setCampaignImage(url);
       })
       .catch((err) => console.error(err));
-  }, [campaignId]);
+  }, [ownerid, campaignId]);
 
   const handleDiscordPublish = async () => {
     if (!sessionIsPublished && sessionContent) {
+      setIsLoading(true);
       dispatchDiscordPublish(
         ownerid,
         campaignId,
@@ -96,7 +104,15 @@ const SessionPage = ({
         sessionTitle,
         createSessionSnippet(sessionContent),
         campaignImage
-      );
+      )
+        .then((isSuccess) => {
+          if (isSuccess) {
+            toast.success("Saved", toastObject);
+          } else {
+            throw new Error("");
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
   };
   const handleSave = () => {
@@ -109,14 +125,28 @@ const SessionPage = ({
         sessionTitle,
         sessionSubTitle,
         sessionDate
-      ).then((isSuccess: boolean) => {
-        console.log(isSuccess);
-      });
+      )
+        .then((isSuccess: boolean) => {
+          if (isSuccess) {
+            toast.success("Saved", toastObject);
+          } else {
+            throw new Error("");
+          }
+        })
+        .catch((err) => {
+          toast.error("Something went wrong!", toastObject);
+        });
     }
   };
 
   const handleKeyDown = (event: any) => {
-    if (event.ctrlKey && event.key === "s" && isOwner && isEditMode) {
+    if (
+      event instanceof KeyboardEvent &&
+      event.ctrlKey &&
+      event.key === "s" &&
+      isOwner &&
+      isEditMode
+    ) {
       event.preventDefault();
       handleSave();
     }
@@ -133,7 +163,7 @@ const SessionPage = ({
           <BackNavigation href={`/${ownerid}/${campaignId}`} />
           <div
             className={styled.container}
-            onKeyDown={(event) => handleKeyDown(event)}
+            onKeyUp={(event) => handleKeyDown(event)}
           >
             <div style={{ gridColumn: "1/2" }}>
               {isEditMode ? (
@@ -171,15 +201,22 @@ const SessionPage = ({
               )}
             </div>
             {isOwner ? (
-              <button
-                onClick={() => setIsEditMode(!isEditMode)}
+              <div
                 style={{
                   gridColumn: "7/8",
-                  height: "2rem",
+                  display: "flex",
+                  justifyContent: "flex-end",
                 }}
               >
-                Edit
-              </button>
+                <button
+                  onClick={() => setIsEditMode(!isEditMode)}
+                  style={{
+                    width: "5rem",
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
             ) : null}
 
             <div style={{ gridColumn: "3/6" }}>
@@ -247,6 +284,7 @@ const SessionPage = ({
                 Publish to discord
               </button>
             ) : null}
+            <ToastContainer />
           </div>
         </ContentContainer>
       </BackgroundLayout>
