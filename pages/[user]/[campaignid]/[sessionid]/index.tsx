@@ -21,7 +21,7 @@ import Loader from "react-loader-spinner";
 import DatePicker from "react-datepicker";
 import "quill/dist/quill.snow.css"; // Add css for snow theme
 import "react-datepicker/dist/react-datepicker.css";
-import { cleanHtmlString } from "../../../../utils/stringUtils";
+import { createSessionSnippet } from "../../../../utils/stringUtils";
 import { quillFormats, quillModules } from "../../../../assets/quill";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({
@@ -57,6 +57,59 @@ const SessionPage = ({
 
   useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
 
+  const handleDiscordPublish = async () => {
+    const webhook = (await get(ref(getDatabase(), `/users/${ownerid}/webhook/`))
+      .then((snapshot) => snapshot.val())
+      .catch((error) => {
+        console.log(error);
+        return "";
+      })) as string;
+
+    const sessionUrl = `http://localhost:3000/${ownerid}/${campaignId}/${session.id}`;
+    const color = await get(
+      ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/color`)
+    ).catch((error) => {
+      console.log(error);
+      return "";
+    });
+    const campaignTitle = await get(
+      ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/title`)
+    )
+      .then((snapshot) => snapshot.val())
+      .catch((error) => {
+        console.log(error);
+        return "";
+      });
+    const data = {
+      username: "Senso bot",
+      embeds: [
+        {
+          title: `${campaignTitle}: ${sessionTitle}`,
+          url: sessionUrl,
+          description: createSessionSnippet(sessionContent),
+          color: color,
+        },
+      ],
+      image: {
+        url: campaignImage,
+      },
+    };
+    if (webhook) {
+      fetch(webhook, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+      });
+    }
+  };
   const handleSave = () => {
     if (isEditMode && isOwner) {
       uploadString(
@@ -77,7 +130,7 @@ const SessionPage = ({
           title: sessionTitle,
           subTitle: sessionSubTitle,
           date: sessionDate.toLocaleDateString(),
-          snippet: cleanHtmlString(sessionContent),
+          snippet: createSessionSnippet(sessionContent),
         }
       )
         .then(() => console.log("Session updated in Firebase Database"))
@@ -121,7 +174,7 @@ const SessionPage = ({
                 </h4>
               )}
             </div>
-            <div style={{ gridColumn: "4/5" }}>
+            <div style={{ gridColumn: "3/6" }}>
               {isEditMode ? (
                 <>
                   <label
@@ -156,7 +209,7 @@ const SessionPage = ({
               </button>
             ) : null}
 
-            <div style={{ gridColumn: "4/5" }}>
+            <div style={{ gridColumn: "3/6" }}>
               {isEditMode ? (
                 <>
                   <label
@@ -210,6 +263,15 @@ const SessionPage = ({
             {isEditMode ? (
               <button onClick={handleSave} style={{ gridColumn: "1/2" }}>
                 Save
+              </button>
+            ) : null}
+
+            {isOwner ? (
+              <button
+                onClick={handleDiscordPublish}
+                style={{ gridColumn: "7/8", marginTop: "2rem" }}
+              >
+                Publish to discord
               </button>
             ) : null}
           </div>
