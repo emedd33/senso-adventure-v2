@@ -7,7 +7,12 @@ import {
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
-import { Campaign, Session } from "../../../assets/campaign.type";
+import {
+  Campaign,
+  FirebaseCampaignItems,
+  FirebaseSessionItems,
+  Session,
+} from "../../../assets/campaign.type";
 import Link from "next/link";
 import Custom404 from "../../404";
 import { child, get, getDatabase, ref, set } from "firebase/database";
@@ -38,17 +43,19 @@ const CampaignPage = ({
     const newSessionId = campaign.sessions
       ? `session_${campaign.sessions.length + 1}`
       : "session_1";
+    const newSession: FirebaseSessionItems = {
+      date: date,
+      title: newSessionId,
+      subTitle: "",
+      snippet: "",
+      isPublished: false,
+    };
     set(
       ref(
         db,
         `users/${ownerid}/campaigns/${campaign.id}/sessions/${newSessionId}`
       ),
-      {
-        date: date,
-        title: newSessionId,
-        subtitle: "",
-        snippet: "",
-      }
+      newSession
     ).then((res) => {
       router.push(`/${ownerid}/${campaign.id}/${newSessionId}`);
     });

@@ -16,7 +16,9 @@ const Footer: React.FC<FooterProps> = () => {
           justifyContent: "center",
         }}
       >
-        <span style={{ marginRight: "1rem" }}>@2022 Eskild Ruud Mageli</span>
+        <span style={{ marginRight: "1rem", color: "white" }}>
+          @2022 Eskild Ruud Mageli
+        </span>
         <Link href="https://github.com/emedd33/senso-adventure-v2/">
           <a>
             <Image

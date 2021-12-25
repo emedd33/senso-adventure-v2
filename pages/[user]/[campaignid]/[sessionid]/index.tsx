@@ -58,56 +58,60 @@ const SessionPage = ({
   useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
 
   const handleDiscordPublish = async () => {
-    const webhook = (await get(ref(getDatabase(), `/users/${ownerid}/webhook/`))
-      .then((snapshot) => snapshot.val())
-      .catch((error) => {
-        console.log(error);
-        return "";
-      })) as string;
+    if (!session.isPublished) {
+      const webhook = (await get(
+        ref(getDatabase(), `/users/${ownerid}/webhook/`)
+      )
+        .then((snapshot) => snapshot.val())
+        .catch((error) => {
+          console.log(error);
+          return "";
+        })) as string;
 
-    const sessionUrl = `http://localhost:3000/${ownerid}/${campaignId}/${session.id}`;
-    const color = await get(
-      ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/color`)
-    ).catch((error) => {
-      console.log(error);
-      return "";
-    });
-    const campaignTitle = await get(
-      ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/title`)
-    )
-      .then((snapshot) => snapshot.val())
-      .catch((error) => {
+      const sessionUrl = `http://localhost:3000/${ownerid}/${campaignId}/${session.id}`;
+      const color = await get(
+        ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/color`)
+      ).catch((error) => {
         console.log(error);
         return "";
       });
-    const data = {
-      username: "Senso bot",
-      embeds: [
-        {
-          title: `${campaignTitle}: ${sessionTitle}`,
-          url: sessionUrl,
-          description: createSessionSnippet(sessionContent),
-          color: color,
+      const campaignTitle = await get(
+        ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/title`)
+      )
+        .then((snapshot) => snapshot.val())
+        .catch((error) => {
+          console.log(error);
+          return "";
+        });
+      const data = {
+        username: "Senso bot",
+        embeds: [
+          {
+            title: `${campaignTitle}: ${sessionTitle}`,
+            url: sessionUrl,
+            description: createSessionSnippet(sessionContent),
+            color: color,
+          },
+        ],
+        image: {
+          url: campaignImage,
         },
-      ],
-      image: {
-        url: campaignImage,
-      },
-    };
-    if (webhook) {
-      fetch(webhook, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "same-origin", // include, *same-origin, omit
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
-      });
+      };
+      if (webhook) {
+        fetch(webhook, {
+          method: "POST", // *GET, POST, PUT, DELETE, etc.
+          mode: "cors", // no-cors, *cors, same-origin
+          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: "same-origin", // include, *same-origin, omit
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          redirect: "follow", // manual, *follow, error
+          referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+          body: JSON.stringify(data), // body data type must match "Content-Type" header
+        });
+      }
     }
   };
   const handleSave = () => {

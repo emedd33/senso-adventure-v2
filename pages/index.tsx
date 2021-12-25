@@ -22,7 +22,7 @@ const Home: NextPage = () => {
         <title>Senso adventure</title>
       </Head>
       <BackgroundLayout>
-        <ContentContainer>
+        <ContentContainer isLoading={loading}>
           <div className={styles.container}>
             <div className={styles.campaignContainer}>
               <Image

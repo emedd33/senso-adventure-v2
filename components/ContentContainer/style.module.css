@@ -3,4 +3,6 @@
   background-color: transparent;
   padding: 1rem;
   overflow: auto;
+  display: flex;
+  justify-content: center;
 }

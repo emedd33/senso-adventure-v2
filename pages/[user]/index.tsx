@@ -3,27 +3,24 @@ import Image from "next/image";
 import styles from "./style.module.css";
 import BackgroundLayout from "../../components/BackgroundLayout";
 import ContentContainer from "../../components/ContentContainer";
-import {
-  Campaign,
-  FirebaseCampaign,
-  FirebaseCampaignItems,
-} from "../../assets/campaign.type";
+import { Campaign } from "../../assets/campaign.type";
 import Link from "next/link";
-import { child, get, getDatabase, ref } from "firebase/database";
 import { Params } from "next/dist/server/router";
-import {
-  getDownloadURL,
-  getStorage,
-  ref as storageRef,
-} from "firebase/storage";
+import { useMemo, useState } from "react";
+import { getCampaigns } from "../../utils/campaignIdUtils";
 
-const Home = ({
-  campaigns,
-  ownerId,
-}: {
-  campaigns: Campaign[];
-  ownerId: string;
-}) => {
+const Home = ({ ownerId }: { ownerId: string }) => {
+  const [campaigns, setCampaigns] = useState<Campaign[]>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  useMemo(() => {
+    setIsLoading(true);
+    getCampaigns(ownerId)
+      .then((campaigns) => {
+        setCampaigns(campaigns);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setIsLoading(false));
+  }, [ownerId]);
   return (
     <>
       <Head>
@@ -31,26 +28,30 @@ const Home = ({
         <title>Senso adventure</title>
       </Head>
       <BackgroundLayout>
-        <ContentContainer>
+        <ContentContainer isLoading={isLoading}>
           <div className={styles.container}>
-            {campaigns?.map((campaign: Campaign) => {
-              return (
-                <Link key={campaign.id} href={`/${ownerId}/${campaign.id}`}>
-                  <a key={campaign.id} className={styles.campaignContainer}>
-                    {campaign.image ? (
-                      <Image
-                        src={campaign.image}
-                        alt="Campaign picture"
-                        layout="fill"
-                        objectFit="cover"
-                        priority={true}
-                      />
-                    ) : null}
-                    <h1 className={styles.campaignTitle}>{campaign.title}</h1>
-                  </a>
-                </Link>
-              );
-            })}
+            {campaigns
+              ? campaigns.map((campaign: Campaign) => {
+                  return (
+                    <Link key={campaign.id} href={`/${ownerId}/${campaign.id}`}>
+                      <a key={campaign.id} className={styles.campaignContainer}>
+                        {campaign.image ? (
+                          <Image
+                            src={campaign.image}
+                            alt="Campaign picture"
+                            layout="fill"
+                            objectFit="cover"
+                            priority={true}
+                          />
+                        ) : null}
+                        <h1 className={styles.campaignTitle}>
+                          {campaign.title}
+                        </h1>
+                      </a>
+                    </Link>
+                  );
+                })
+              : null}
           </div>
         </ContentContainer>
       </BackgroundLayout>
@@ -60,33 +61,8 @@ const Home = ({
 
 export async function getServerSideProps({ params }: Params) {
   const ownerId = params.user;
-  const storage = getStorage();
-
-  const campaigns = await get(
-    child(ref(getDatabase()), `users/${ownerId}/campaigns/`)
-  )
-    .then((snapshot) => snapshot.val())
-    .then((campagins: FirebaseCampaign) =>
-      Promise.all(
-        Object.entries(campagins).map(
-          async ([campaignid, campaign]: [string, FirebaseCampaignItems]) => ({
-            id: campaignid,
-            title: campaign.title,
-            image: campaign.image
-              ? await getDownloadURL(
-                  storageRef(
-                    storage,
-                    `/users/${ownerId}/campaigns/${campaignid}/${campaign.image}`
-                  )
-                )
-              : "",
-          })
-        )
-      )
-    )
-    .catch((err) => console.error(err));
   return {
-    props: { campaigns: campaigns, ownerId: ownerId }, // will be passed to the page component as props
+    props: { ownerId: ownerId }, // will be passed to the page component as props
   };
 }
 
