@@ -7,12 +7,7 @@ import {
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
-import {
-  Campaign,
-  FirebaseCampaignItems,
-  FirebaseSessionItems,
-  Session,
-} from "../../../assets/campaign.type";
+import { Session } from "../../../assets/campaign.type";
 import Link from "next/link";
 import Custom404 from "../../404";
 import { child, get, getDatabase, ref, set } from "firebase/database";

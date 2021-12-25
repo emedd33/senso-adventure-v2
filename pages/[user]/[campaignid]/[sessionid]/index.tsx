@@ -23,25 +23,34 @@ import "quill/dist/quill.snow.css"; // Add css for snow theme
 import "react-datepicker/dist/react-datepicker.css";
 import { createSessionSnippet } from "../../../../utils/stringUtils";
 import { quillFormats, quillModules } from "../../../../assets/quill";
+import {
+  dispatchDiscordPublish,
+  dispatchSaveSession,
+  getContentById,
+} from "../../../../utils/sessionIdUtils";
+import { getCampaignImageById } from "../../../../utils/campaignIdUtils";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SessionPage = ({
   campaignId,
-  session,
+  sessionid,
   ownerid,
-  campaignImage,
-  content,
+  title,
 }: SessionIdPageProps) => {
   const storage = getStorage();
-  const [sessionContent, setSessionContent] = useState(content);
-  const [sessionTitle, setSessionTitle] = useState(session.title);
-  const [sessionSubTitle, setSessionSubTitle] = useState(session.subTitle);
-  const [sessionDate, setSessionDate] = useState(new Date(session.date));
   const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [user, error, loading] = useAuthState(getAuth());
   const [modules, setModules] = useState<any>({ toolbar: [] });
   const [formats, setFormats] = useState<any>([]);
   const [isOwner, setIsOwner] = useState(false);
+  const [campaignImage, setCampaignImage] = useState<string>();
+
+  const [sessionIsPublished, setSessionIsPublished] = useState<boolean>();
+  const [sessionContent, setSessionContent] = useState<string>();
+  const [sessionTitle, setSessionTitle] = useState<string>(title);
+  const [sessionSubTitle, setSessionSubTitle] = useState<string>("");
+  const [sessionDate, setSessionDate] = useState<Date>(new Date());
+
   useEffect(
     () => setModules(isEditMode ? quillModules : { toolbar: [] }),
     [isEditMode]
@@ -56,91 +65,53 @@ const SessionPage = ({
   });
 
   useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
+  useMemo(() => {
+    setIsLoading(true);
+    getContentById(ownerid, campaignId, sessionid)
+      .then((res) => {
+        setSessionDate(new Date(res.session.date));
+        setSessionSubTitle(res.session.subTitle);
+        setSessionIsPublished(res.session.isPublished);
+        setSessionContent(res.sessionContent);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  // Get Campaign Image
+  useMemo(() => {
+    setIsLoading(true);
+    getCampaignImageById(ownerid, campaignId)
+      .then((url) => {
+        setCampaignImage(url);
+      })
+      .catch((err) => console.error(err));
+  }, [campaignId]);
 
   const handleDiscordPublish = async () => {
-    if (!session.isPublished) {
-      const webhook = (await get(
-        ref(getDatabase(), `/users/${ownerid}/webhook/`)
-      )
-        .then((snapshot) => snapshot.val())
-        .catch((error) => {
-          console.log(error);
-          return "";
-        })) as string;
-
-      const sessionUrl = `http://localhost:3000/${ownerid}/${campaignId}/${session.id}`;
-      const color = await get(
-        ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/color`)
-      ).catch((error) => {
-        console.log(error);
-        return "";
-      });
-      const campaignTitle = await get(
-        ref(getDatabase(), `/users/${ownerid}/campaigns/${campaignId}/title`)
-      )
-        .then((snapshot) => snapshot.val())
-        .catch((error) => {
-          console.log(error);
-          return "";
-        });
-      const data = {
-        username: "Senso bot",
-        embeds: [
-          {
-            title: `${campaignTitle}: ${sessionTitle}`,
-            url: sessionUrl,
-            description: createSessionSnippet(sessionContent),
-            color: color,
-          },
-        ],
-        image: {
-          url: campaignImage,
-        },
-      };
-      if (webhook) {
-        fetch(webhook, {
-          method: "POST", // *GET, POST, PUT, DELETE, etc.
-          mode: "cors", // no-cors, *cors, same-origin
-          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: "same-origin", // include, *same-origin, omit
-          headers: {
-            "Content-Type": "application/json",
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          redirect: "follow", // manual, *follow, error
-          referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-          body: JSON.stringify(data), // body data type must match "Content-Type" header
-        });
-      }
+    if (!sessionIsPublished && sessionContent) {
+      dispatchDiscordPublish(
+        ownerid,
+        campaignId,
+        sessionid,
+        sessionTitle,
+        createSessionSnippet(sessionContent),
+        campaignImage
+      );
     }
   };
   const handleSave = () => {
-    if (isEditMode && isOwner) {
-      uploadString(
-        storageRef(
-          storage,
-          `users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}.html`
-        ),
-        sessionContent
-      )
-        .then(() => console.log("Session updated in Firebase Storage"))
-        .catch((err) => console.error(err));
-      set(
-        ref(
-          getDatabase(),
-          `/users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}`
-        ),
-        {
-          title: sessionTitle,
-          subTitle: sessionSubTitle,
-          date: sessionDate.toLocaleDateString(),
-          snippet: createSessionSnippet(sessionContent),
-        }
-      )
-        .then(() => console.log("Session updated in Firebase Database"))
-        .catch((error) => {
-          console.error(error);
-        });
+    if (isEditMode && isOwner && sessionContent) {
+      dispatchSaveSession(
+        ownerid,
+        campaignId,
+        sessionid,
+        sessionContent,
+        sessionTitle,
+        sessionSubTitle,
+        sessionDate
+      ).then((isSuccess: boolean) => {
+        console.log(isSuccess);
+      });
     }
   };
 
@@ -150,13 +121,11 @@ const SessionPage = ({
       handleSave();
     }
   };
-  if (!session || !campaignId) {
-    return <Custom404 />;
-  }
+
   return (
     <>
       <Head>
-        <title>{session.title}</title>
+        <title>{title}</title>
         <link rel="shortcut icon" href="/icons/dice.png" />
       </Head>
       <BackgroundLayout backgroundImageUrl={campaignImage}>
@@ -174,7 +143,7 @@ const SessionPage = ({
                 />
               ) : (
                 <h4 className={styles.date} suppressHydrationWarning>
-                  {sessionDate.toLocaleDateString()}
+                  {sessionDate?.toLocaleDateString()}
                 </h4>
               )}
             </div>
@@ -197,7 +166,7 @@ const SessionPage = ({
                 </>
               ) : (
                 <h1 className={styles.title}>
-                  {sessionTitle ? sessionTitle : session.id}
+                  {sessionTitle ? sessionTitle : sessionid}
                 </h1>
               )}
             </div>
@@ -270,7 +239,7 @@ const SessionPage = ({
               </button>
             ) : null}
 
-            {isOwner ? (
+            {!sessionIsPublished && isOwner ? (
               <button
                 onClick={handleDiscordPublish}
                 style={{ gridColumn: "7/8", marginTop: "2rem" }}
@@ -286,57 +255,28 @@ const SessionPage = ({
 };
 
 export async function getServerSideProps({ params }: any) {
-  const storage = getStorage();
-
   // fetches the campaign data pased on the path
   const campaignid = params.campaignid;
   const sessionid = params.sessionid;
   const ownerid = params.user;
-
-  const campaignImageId = await get(
-    child(ref(getDatabase()), `/users/${ownerid}/campaigns/${campaignid}/image`)
-  )
-    .then((snapshot) => snapshot.val())
-    .catch((error) => console.error(error));
-
-  const session = await get(
+  const sessionTitle: string = await get(
     child(
       ref(getDatabase()),
-      `/users/${ownerid}/campaigns/${campaignid}/sessions/${sessionid}`
+      `users/${ownerid}/campaigns/${campaignid}/sessions/${sessionid}/title`
     )
   )
-    .then((snapshot) => snapshot.val())
-    .catch((error) => console.error(error));
-  // Fetches url for background image in SSR
-  const campaignImage = await getDownloadURL(
-    storageRef(
-      storage,
-      `users/${ownerid}/campaigns/${campaignid}/${campaignImageId}`
-    )
-  ).catch((err) => console.log(err));
-
-  const sessionContent = await getDownloadURL(
-    storageRef(
-      storage,
-      `users/${ownerid}/campaigns/${campaignid}/sessions/${sessionid}.html`
-    )
-  )
-    .then((url) =>
-      fetch(url, {
-        credentials: "same-origin",
-      })
-        .then((res) => res.text())
-        .catch((err) => console.error(err))
-    )
-    .catch((err) => console.error(err));
+    .then((snapshot) => (snapshot.exists() ? snapshot.val() : null))
+    .catch((error) => {
+      console.error(error);
+      return "";
+    });
   return {
     props: {
       campaignId: campaignid,
-      session: { ...session, id: sessionid },
       ownerid: ownerid,
-      campaignImage: campaignImage,
-      content: sessionContent ? sessionContent : "",
-    }, // will be passed to the page component as props
+      sessionid: sessionid,
+      title: sessionTitle,
+    },
   };
 }
 

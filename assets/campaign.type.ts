@@ -44,8 +44,7 @@ export interface Session {
 
 export type SessionIdPageProps = {
   campaignId: string;
-  session: Session;
+  sessionid: string;
   ownerid: string;
-  campaignImage: string;
-  content: string;
+  title: string;
 };
