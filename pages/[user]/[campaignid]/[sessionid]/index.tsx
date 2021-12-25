@@ -177,7 +177,7 @@ const SessionPage = ({
                 </h4>
               )}
             </div>
-            <div style={{ gridColumn: "3/6" }}>
+            <div style={{ gridColumn: "2/7" }}>
               {isEditMode ? (
                 <>
                   <label
@@ -208,18 +208,11 @@ const SessionPage = ({
                   justifyContent: "flex-end",
                 }}
               >
-                <button
-                  onClick={() => setIsEditMode(!isEditMode)}
-                  style={{
-                    width: "5rem",
-                  }}
-                >
-                  Edit
-                </button>
+                <button onClick={() => setIsEditMode(!isEditMode)}>Edit</button>
               </div>
             ) : null}
 
-            <div style={{ gridColumn: "3/6" }}>
+            <div style={{ gridColumn: "1/8" }}>
               {isEditMode ? (
                 <>
                   <label

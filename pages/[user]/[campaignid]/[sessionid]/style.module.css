@@ -15,12 +15,14 @@
 .title {
   text-align: center;
   margin-top: 0;
+  min-width: 3rem;
 }
 
 .subtitle {
   text-align: center;
   margin-top: 0;
   margin-bottom: 0;
+  min-width: 5rem;
 }
 .date {
   text-align: center;
