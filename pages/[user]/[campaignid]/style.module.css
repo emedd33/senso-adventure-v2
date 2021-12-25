@@ -1,3 +1,7 @@
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
 .sessionContainer {
   background-color: #face8b;
   width: 100%;

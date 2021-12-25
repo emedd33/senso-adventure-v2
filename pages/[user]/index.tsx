@@ -7,7 +7,7 @@ import { Campaign } from "../../assets/campaign.type";
 import Link from "next/link";
 import { Params } from "next/dist/server/router";
 import { useMemo, useState } from "react";
-import { getCampaigns } from "../../utils/campaignIdUtils";
+import { getCampaigns } from "../../utils/UserIdUtils";
 
 const Home = ({ ownerId }: { ownerId: string }) => {
   const [campaigns, setCampaigns] = useState<Campaign[]>();

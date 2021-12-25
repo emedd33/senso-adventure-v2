@@ -2,15 +2,17 @@ import style from "./style.module.css";
 import Link from "next/link";
 import { IoMdArrowBack } from "react-icons/io";
 
-type BackNavigationProp = { href: string };
-const BackNavigation: React.FC<BackNavigationProp> = ({ href }) => {
+type BackNavigationProp = { href: string; style: any };
+const BackNavigation: React.FC<BackNavigationProp> = ({ href, style }) => {
   return (
-    <Link href={href}>
-      <a className={style.container}>
-        <IoMdArrowBack />
-        <span style={{ color: "var(--main-color)" }}>back</span>
-      </a>
-    </Link>
+    <div style={style} className={style.container}>
+      <Link href={href}>
+        <a style={{ display: "flex", alignItems: "center" }}>
+          <IoMdArrowBack color="#face8b" />
+          <span style={{ color: "var(--main-color)" }}>back</span>
+        </a>
+      </Link>
+    </div>
   );
 };
 

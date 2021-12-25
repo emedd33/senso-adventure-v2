@@ -28,7 +28,7 @@ const BackgroundLayout: React.FC<BackgroundComponentProp> = ({
                 : "/images/background-home.jpg"
             }
             layout="fill"
-            objectFit="fill"
+            objectFit="cover"
           />
         </div>
         <Navbar />
