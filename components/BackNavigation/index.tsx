@@ -7,7 +7,7 @@ const BackNavigation: React.FC<BackNavigationProp> = ({ href, style }) => {
   return (
     <div style={style} className={styles.container}>
       <Link href={href}>
-        <a style={{ display: "flex", alignItems: "center" }}>
+        <a style={{ display: "flex", alignItems: "center", fontSize: "2rem" }}>
           <IoMdArrowBack color="#face8b" />
           <span style={{ color: "var(--main-color)" }}>back</span>
         </a>

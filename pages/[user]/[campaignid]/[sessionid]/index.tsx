@@ -151,7 +151,7 @@ const SessionPage = ({
       handleSave();
     }
   };
-
+  if (!title || !ownerid) return <Custom404 />;
   return (
     <>
       <Head>
