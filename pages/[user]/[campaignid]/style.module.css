@@ -23,5 +23,6 @@
 .title {
   width: 100%;
   text-align: center;
-  background-color: #face8b;
+  text-shadow: 1px 2px #face8b;
+  /* background-color: #face8b; */
 }

@@ -62,7 +62,7 @@ const SessionPage = ({
       uploadString(
         storageRef(
           storage,
-          `users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}.txt`
+          `users/${ownerid}/campaigns/${campaignId}/sessions/${session.id}.html`
         ),
         sessionContent
       )
@@ -177,6 +177,17 @@ const SessionPage = ({
                 <h2 className={styles.subtitle}>{sessionSubTitle}</h2>
               )}
             </div>
+            <div style={{ gridColumn: "2/7" }}>
+              <svg
+                width="100%"
+                height="4"
+                viewBox="0 0 375 4"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M375 2L0 3.73205V0.267949L375 2Z" fill="#A12A20" />
+              </svg>
+            </div>
             <div
               className={
                 isEditMode ? styles.quillContainer : styles.quillContainerRead
@@ -189,6 +200,7 @@ const SessionPage = ({
                 <ReactQuill
                   readOnly={!isEditMode}
                   theme="snow"
+                  style={{ width: "100%" }}
                   value={sessionContent}
                   modules={modules}
                   onChange={(val) => setSessionContent(val)}
@@ -240,7 +252,7 @@ export async function getServerSideProps({ params }: any) {
   const sessionContent = await getDownloadURL(
     storageRef(
       storage,
-      `users/${ownerid}/campaigns/${campaignid}/sessions/${sessionid}.txt`
+      `users/${ownerid}/campaigns/${campaignid}/sessions/${sessionid}.html`
     )
   )
     .then((url) =>
@@ -257,7 +269,7 @@ export async function getServerSideProps({ params }: any) {
       session: { ...session, id: sessionid },
       ownerid: ownerid,
       campaignImage: campaignImage,
-      content: sessionContent,
+      content: sessionContent ? sessionContent : "",
     }, // will be passed to the page component as props
   };
 }

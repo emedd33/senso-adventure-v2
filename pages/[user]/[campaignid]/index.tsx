@@ -10,10 +10,14 @@ import styles from "./style.module.css";
 import { Campaign, Session } from "../../../assets/campaign.type";
 import Link from "next/link";
 import Custom404 from "../../404";
-import { child, get, getDatabase, ref } from "firebase/database";
+import { child, get, getDatabase, ref, set } from "firebase/database";
 
 import { Params } from "next/dist/server/router";
 import BackNavigation from "../../../components/BackNavigation";
+import { useMemo, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { getAuth } from "firebase/auth";
+import { useRouter } from "next/router";
 
 const CampaignPage = ({
   campaign,
@@ -24,6 +28,31 @@ const CampaignPage = ({
   ownerid: string;
   campaignImage: string;
 }) => {
+  const router = useRouter();
+  const [isOwner, setIsOwner] = useState(false);
+  const [user, error, loading] = useAuthState(getAuth());
+  useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
+  const createNewSession = () => {
+    const db = getDatabase();
+    const date = new Date().toLocaleDateString();
+    const newSessionId = campaign.sessions
+      ? `session_${campaign.sessions.length + 1}`
+      : "session_1";
+    set(
+      ref(
+        db,
+        `users/${ownerid}/campaigns/${campaign.id}/sessions/${newSessionId}`
+      ),
+      {
+        date: date,
+        title: newSessionId,
+        subtitle: "",
+        snippet: "",
+      }
+    ).then((res) => {
+      router.push(`/${ownerid}/${campaign.id}/${newSessionId}`);
+    });
+  };
   if (!campaign) {
     return <Custom404 />;
   }
@@ -37,8 +66,19 @@ const CampaignPage = ({
 
       <BackgroundLayout backgroundImageUrl={campaignImage}>
         <ContentContainer>
-          <h1 className={styles.title}>{campaign.title}</h1>
           <BackNavigation href={`/${ownerid}`} />
+          <h1 className={styles.title}>{campaign.title}</h1>
+          {isOwner ? (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                marginBottom: "1rem",
+              }}
+            >
+              <button onClick={createNewSession}>Create new session</button>
+            </div>
+          ) : null}
           {campaign.sessions?.map((session: Session) => {
             return (
               <Link
