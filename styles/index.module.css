@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .campaignContainer {
@@ -19,4 +20,25 @@
   z-index: 1;
   background-color: rgb(255, 255, 255, 0.5);
   padding: 1rem;
+}
+
+.userContainer {
+  position: relative;
+  padding: 1rem;
+  background-color: #face8b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.userContainer:hover {
+  opacity: 1;
+}
+
+.userContainer:active {
+  transform: scale(0.98);
+  /* Scaling button to 0.98 to its original size */
+  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+  /* Lowering the shadow */
 }

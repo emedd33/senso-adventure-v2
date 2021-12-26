@@ -4,6 +4,9 @@ import Loader from "react-loader-spinner";
 import style from "./style.module.css";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { FirebaseError } from "firebase-admin";
+import { getDatabase, ref, set } from "firebase/database";
+import { toast } from "react-toastify";
+import { toastObject } from "../../assets/toast";
 
 type RegisterProp = {
   closeModal?: () => void;
@@ -13,6 +16,7 @@ const Register: React.FC<RegisterProp> = ({ closeModal, setIsRegistering }) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [registerEmail, setRegisterEmail] = useState("");
+  const [registerUsername, setRegisterUsername] = useState("");
   const [registerPassword1, setRegisterPassword1] = useState("");
   const [registerPassword2, setRegisterPassword2] = useState("");
   const register = () => {
@@ -21,6 +25,9 @@ const Register: React.FC<RegisterProp> = ({ closeModal, setIsRegistering }) => {
     }
     if (!registerPassword1) {
       return setErrorMessage("Fill out password");
+    }
+    if (!registerUsername) {
+      return setErrorMessage("Fill username");
     }
 
     if (registerPassword2 !== registerPassword1) {
@@ -33,13 +40,20 @@ const Register: React.FC<RegisterProp> = ({ closeModal, setIsRegistering }) => {
     const auth = getAuth();
 
     createUserWithEmailAndPassword(auth, registerEmail, registerPassword1)
-      .then(() => {
-        if (closeModal) {
-          closeModal();
-        }
+      .then((res) => {
+        set(
+          ref(getDatabase(), `users/${res.user.uid}/username`),
+          registerUsername
+        ).then(() => {
+          toast.success("Success", toastObject);
+          if (closeModal) {
+            closeModal();
+          }
+        });
       })
       .catch((err: FirebaseError) => {
-        setErrorMessage(err.message);
+        console.error(err);
+        toast.error("Something went wrong", toastObject);
       });
   };
 
@@ -49,6 +63,15 @@ const Register: React.FC<RegisterProp> = ({ closeModal, setIsRegistering }) => {
         onKeyDown={(event) => (event.key === "Enter" ? register() : null)}
         className={style.formContainer}
       >
+        <input
+          id="username"
+          value={registerUsername}
+          placeholder="Enter username"
+          type="text"
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setRegisterUsername(event.target.value)
+          }
+        ></input>
         <input
           id="email"
           value={registerEmail}

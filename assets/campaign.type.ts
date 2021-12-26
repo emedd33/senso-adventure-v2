@@ -1,5 +1,6 @@
 export interface FirebaseUserItems {
   campaigns: FirebaseCampaign;
+  username: string;
 }
 export interface FirebaseUser {
   [id: string]: FirebaseUserItems;

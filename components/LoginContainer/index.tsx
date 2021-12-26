@@ -7,6 +7,8 @@ import {
   dispatchLoginWithGoogle,
 } from "../../firebase/login";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import { toastObject } from "../../assets/toast";
 
 type LoginProp = {
   closeModal?: () => void;
@@ -39,8 +41,9 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
     dispatchLoginWithGoogle().then(({ code, message }) => {
       if (code === 0 && closeModal) {
         closeModal();
+        toast.success("Success", toastObject);
       } else {
-        setErrorMessage(message);
+        toast.error("Something went wrong", toastObject);
       }
     });
   };
