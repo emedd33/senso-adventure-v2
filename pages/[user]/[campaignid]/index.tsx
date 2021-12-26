@@ -3,7 +3,7 @@ import Head from "next/head";
 import BackgroundLayout from "../../../components/BackgroundLayout";
 import ContentContainer from "../../../components/ContentContainer";
 import styles from "./style.module.css";
-import { Session } from "../../../assets/campaign.type";
+import { Player, Session } from "../../../assets/campaign.type";
 import Link from "next/link";
 import Custom404 from "../../404";
 import { child, get, getDatabase, ref, set } from "firebase/database";
@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import {
   dispatchNewSession,
   getCampaignImageById,
+  getPlayersById,
   getSessionsById,
 } from "../../../utils/campaignIdUtils";
 import { toast } from "react-toastify";
@@ -35,6 +36,7 @@ const CampaignPage = ({
   const [isOwner, setIsOwner] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [sessions, setSessions] = useState<Session[]>();
+  const [players, setPlayers] = useState<Player[]>();
   const [campaignImage, setCampaignImage] = useState<string>();
   const [user, loading, error] = useAuthState(getAuth());
   useMemo(() => setIsOwner(user?.uid === ownerid), [user, ownerid]);
@@ -50,6 +52,13 @@ const CampaignPage = ({
         return secondDate - firstDate;
       });
       setSessions(res);
+    });
+  }, [ownerid, campaignid]);
+
+  useMemo(() => {
+    setIsLoading(true);
+    getPlayersById(ownerid, campaignid).then((res: Player[]) => {
+      setPlayers(res);
     });
   }, [ownerid, campaignid]);
 
@@ -100,6 +109,25 @@ const CampaignPage = ({
             <h1 className={styles.title} style={{ gridColumn: "2/3" }}>
               {campaignTitle}{" "}
             </h1>
+            {players ? (
+              <div
+                className={styles.playerContainer}
+                style={{ gridColumn: "2/3" }}
+              >
+                <table className={styles.table}>
+                  <tr>
+                    <th>Character name</th>
+                    <th>Player name</th>
+                  </tr>
+                  {players?.map((player: Player) => (
+                    <tr>
+                      <td>{player.characterName}</td>
+                      <td>{player.playerName}</td>
+                    </tr>
+                  ))}
+                </table>
+              </div>
+            ) : null}
             {isOwner ? (
               <div
                 style={{
@@ -121,6 +149,7 @@ const CampaignPage = ({
               </div>
             ) : null}
           </div>
+
           {sessions?.map((session: Session) => {
             return (
               <Link

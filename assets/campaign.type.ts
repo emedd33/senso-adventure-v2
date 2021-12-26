@@ -8,7 +8,17 @@ export interface FirebaseCampaignItems {
   title: string;
   image: string;
   color: number;
+  players?: FirebasePlayer[];
   sessions?: FirebaseSession[];
+}
+
+export interface FirebasePlayer {
+  [id: string]: { characterName: string; playerName: string };
+}
+
+export interface Player {
+  characterName: string;
+  playerName: string;
 }
 export interface FirebaseCampaign {
   [id: string]: FirebaseCampaignItems;
@@ -30,6 +40,7 @@ export interface Campaign {
   title: string;
   image: string;
   color: number;
+  players?: { characterName: string; playerName: string }[];
   sessions?: Session[];
 }
 

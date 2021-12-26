@@ -4,7 +4,7 @@ import {
   getStorage,
   ref as storageRef,
 } from "firebase/storage";
-import { FirebaseSessionItems, Session } from "../assets/campaign.type";
+import { FirebaseSessionItems, Player, Session } from "../assets/campaign.type";
 
 export const getSessionsById = async (
   ownerid: string,
@@ -26,6 +26,24 @@ export const getSessionsById = async (
           }))
         : [];
     })
+    .catch((err) => {
+      console.error(err);
+      return [];
+    });
+};
+
+export const getPlayersById = async (
+  ownerid: string,
+  campaignid: string
+): Promise<Player[]> => {
+  // Fetches the campaign in SSR
+  return get(
+    child(
+      ref(getDatabase()),
+      `users/${ownerid}/campaigns/${campaignid}/players`
+    )
+  )
+    .then((snapshot) => snapshot.val())
     .catch((err) => {
       console.error(err);
       return [];
