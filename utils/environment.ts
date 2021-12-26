@@ -7,5 +7,5 @@ export const getEnvironment = () => {
     return "http://localhost:3000";
   }
 
-  return window.location.host;
+  return window.location.host.toString();
 };
