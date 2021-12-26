@@ -17,7 +17,6 @@
 }
 .customModal {
   background: #b2dbbf;
-  max-width: 500px;
   width: 100%;
 }
 
@@ -64,5 +63,4 @@
 
 .registerLoginButton {
   margin: 1rem;
-  width: 5rem;
 }

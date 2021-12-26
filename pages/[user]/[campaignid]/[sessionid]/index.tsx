@@ -9,12 +9,7 @@ import { child, get, getDatabase, ref, set } from "firebase/database";
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { SessionIdPageProps } from "../../../../assets/campaign.type";
-import {
-  getDownloadURL,
-  getStorage,
-  ref as storageRef,
-  uploadString,
-} from "firebase/storage";
+import { getStorage } from "firebase/storage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
 import Loader from "react-loader-spinner";

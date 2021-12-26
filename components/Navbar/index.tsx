@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Modal from "react-responsive-modal";
 import LoginContainer from "../LoginContainer";
 import Register from "../Register";
@@ -8,6 +8,14 @@ import styles from "./style.module.css";
 import { useAuthState } from "react-firebase-hooks/auth";
 import "react-responsive-modal/styles.css";
 import { getAuth, signOut } from "firebase/auth";
+import { child, get, getDatabase, ref } from "firebase/database";
+import { AiFillCheckCircle, AiFillEdit } from "react-icons/ai";
+import { FiXCircle } from "react-icons/fi";
+import { dispatchSetWebhook } from "../../utils/UserIdUtils";
+import { toast, ToastContainer } from "react-toastify";
+import { toastObject } from "../../assets/toast";
+import "react-toastify/dist/ReactToastify.css";
+
 type NavbarProp = {};
 
 const Navbar: React.FC<NavbarProp> = ({}) => {
@@ -15,6 +23,8 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
   const [user, loading, error] = useAuthState(auth);
   const [openModal, setOpenModal] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [webhook, setWebhook] = useState<string>("");
+  const [editWebhookOpen, setEditWebhookPotter] = useState<boolean>(false);
   const logout = () => {
     signOut(auth).catch((error) => console.error(error));
   };
@@ -22,6 +32,21 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
     setOpenModal(false);
     setIsRegistering(false);
   };
+
+  const saveWebhook = () => {
+    if (user?.uid) {
+      dispatchSetWebhook(user?.uid, webhook).then((isSuccess) => {
+        isSuccess
+          ? toast.success("Saved", toastObject)
+          : toast.error("Something went wrong", toastObject);
+      });
+    }
+  };
+  useMemo(() => {
+    get(child(ref(getDatabase()), `users/${user?.uid}/webhook`))
+      .then((snapshot) => snapshot.val())
+      .then((res) => setWebhook(res));
+  }, [user]);
 
   return (
     <>
@@ -64,9 +89,41 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
               />
             </div>
             {user ? (
-              <button onClick={logout} style={{ color: "red" }}>
-                Logout
-              </button>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1",
+                  justifyContent: "center",
+                  gap: "1rem",
+                }}
+              >
+                <span>
+                  Discord webhook:{" "}
+                  {webhook ? (
+                    <AiFillCheckCircle color="green" />
+                  ) : (
+                    <FiXCircle color="red" />
+                  )}
+                  <button
+                    onClick={() => setEditWebhookPotter(!editWebhookOpen)}
+                    style={{ marginLeft: "1rem" }}
+                  >
+                    <AiFillEdit />
+                  </button>
+                </span>
+                {editWebhookOpen ? (
+                  <div>
+                    <input
+                      value={webhook}
+                      onChange={(event) => setWebhook(event.target.value)}
+                    />
+                    <button onClick={saveWebhook}>Save</button>
+                  </div>
+                ) : null}
+                <button onClick={logout} style={{ color: "red" }}>
+                  Logout
+                </button>
+              </div>
             ) : isRegistering ? (
               <Register
                 closeModal={handleClose}
@@ -80,6 +137,7 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
             )}
             <div style={{ marginTop: "1rem" }}></div>
           </div>
+          <ToastContainer />
         </Modal>
       </div>
     </>

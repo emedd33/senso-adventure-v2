@@ -1,4 +1,4 @@
-import { child, get, getDatabase, ref } from "firebase/database";
+import { child, get, getDatabase, ref, set } from "firebase/database";
 import {
   getDownloadURL,
   getStorage,
@@ -33,4 +33,13 @@ export const getCampaigns = async (ownerId: string): Promise<Campaign[]> => {
         )
       )
     ) as Promise<Campaign[]>;
+};
+
+export const dispatchSetWebhook = (
+  uid: string,
+  newWebhook: string
+): Promise<boolean> => {
+  return set(ref(getDatabase(), `/users/${uid}/webhook`), newWebhook)
+    .then(() => true)
+    .catch(() => false);
 };

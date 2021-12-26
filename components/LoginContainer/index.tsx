@@ -111,7 +111,7 @@ const Login: React.FC<LoginProp> = ({ closeModal, setIsRegistering }) => {
           height={"18px"}
           alt="Google button"
         />
-        <span style={{ marginRight: "24px", color: "black" }}>
+        <span style={{ marginLeft: "24px", color: "black" }}>
           Sign in with Google{" "}
         </span>
       </button>
