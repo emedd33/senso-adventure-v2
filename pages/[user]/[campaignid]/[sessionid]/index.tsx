@@ -101,7 +101,7 @@ const SessionPage = ({
       )
         .then((isSuccess) => {
           if (isSuccess) {
-            toast.success("Saved", toastObject);
+            toast.success("Created new post ", toastObject);
           } else {
             throw new Error("");
           }

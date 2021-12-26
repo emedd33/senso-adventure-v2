@@ -8,8 +8,6 @@ import ContentContainer from "../components/ContentContainer";
 import { useMemo, useState } from "react";
 import { child, get, getDatabase, ref } from "firebase/database";
 import Link from "next/link";
-import { getAuth } from "firebase/auth";
-import { FirebaseUser, FirebaseUserItems } from "../assets/campaign.type";
 
 const Home: NextPage = () => {
   const [allUsers, setAllUsers] = useState<any[]>([]);
