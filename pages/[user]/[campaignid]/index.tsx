@@ -120,7 +120,7 @@ const CampaignPage = ({
                     <th>Player name</th>
                   </tr>
                   {players?.map((player: Player) => (
-                    <tr>
+                    <tr key={player.characterName}>
                       <td>{player.characterName}</td>
                       <td>{player.playerName}</td>
                     </tr>
