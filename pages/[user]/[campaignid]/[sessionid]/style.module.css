@@ -1,9 +1,10 @@
-.container {
+.contentContainer {
   background-color: #face8b;
   padding: 1rem;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   overflow: hidden;
+  gap: 1rem;
 }
 
 .backLink {

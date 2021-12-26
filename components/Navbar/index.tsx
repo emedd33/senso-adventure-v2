@@ -92,25 +92,33 @@ const Navbar: React.FC<NavbarProp> = ({}) => {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1",
+                  gridTemplateColumns: "1fr",
                   justifyContent: "center",
                   gap: "1rem",
                 }}
               >
-                <span>
-                  Discord webhook:{" "}
-                  {webhook ? (
-                    <AiFillCheckCircle color="green" />
-                  ) : (
-                    <FiXCircle color="red" />
-                  )}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <span>
+                    Discord webhook:{" "}
+                    {webhook ? (
+                      <AiFillCheckCircle color="green" />
+                    ) : (
+                      <FiXCircle color="red" />
+                    )}
+                  </span>
                   <button
                     onClick={() => setEditWebhookPotter(!editWebhookOpen)}
-                    style={{ marginLeft: "1rem" }}
                   >
                     <AiFillEdit />
                   </button>
-                </span>
+                </div>
                 {editWebhookOpen ? (
                   <div>
                     <input

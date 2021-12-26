@@ -48,12 +48,14 @@
   display: grid;
   justify-items: center;
   background-color: #face8b;
-  padding: 1rem;
+  padding: 2rem;
+  width: 30rem;
 }
 .modalHeader {
   padding: 1rem;
   display: grid;
   justify-items: center;
+  width: 30rem;
   grid-template-rows: minmax(min-content, max-content);
 }
 .loginTitle {

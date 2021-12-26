@@ -2,7 +2,6 @@ import Head from "next/head";
 import styles from "./style.module.css";
 import BackgroundLayout from "../../../../components/BackgroundLayout";
 import ContentContainer from "../../../../components/ContentContainer";
-import styled from "./style.module.css";
 import Custom404 from "../../../404";
 import BackNavigation from "../../../../components/BackNavigation";
 import { child, get, getDatabase, ref, set } from "firebase/database";
@@ -157,7 +156,7 @@ const SessionPage = ({
         <ContentContainer>
           <BackNavigation href={`/${ownerid}/${campaignId}`} />
           <div
-            className={styled.container}
+            className={styles.contentContainer}
             onKeyUp={(event) => handleKeyDown(event)}
           >
             <div style={{ gridColumn: "1/2" }}>
@@ -174,21 +173,13 @@ const SessionPage = ({
             </div>
             <div style={{ gridColumn: "2/7" }}>
               {isEditMode ? (
-                <>
-                  <label
-                    htmlFor="title-container"
-                    style={{ marginLeft: "1rem" }}
-                  >
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="title-container"
-                    placeholder="Write a fitting title"
-                    value={sessionTitle}
-                    onChange={(event) => setSessionTitle(event.target.value)}
-                  />
-                </>
+                <input
+                  type="text"
+                  id="title-container"
+                  placeholder="Write a fitting title"
+                  value={sessionTitle}
+                  onChange={(event) => setSessionTitle(event.target.value)}
+                />
               ) : (
                 <h1 className={styles.title}>
                   {sessionTitle ? sessionTitle : sessionid}
@@ -209,21 +200,13 @@ const SessionPage = ({
 
             <div style={{ gridColumn: "1/8" }}>
               {isEditMode ? (
-                <>
-                  <label
-                    htmlFor="subtitle-container"
-                    style={{ marginLeft: "1rem" }}
-                  >
-                    Subtitle
-                  </label>
-                  <input
-                    type="text"
-                    id="subtitle-container"
-                    placeholder="Write a fitting subtile"
-                    value={sessionSubTitle}
-                    onChange={(event) => setSessionSubTitle(event.target.value)}
-                  />
-                </>
+                <input
+                  type="text"
+                  id="subtitle-container"
+                  placeholder="Write a fitting subtile"
+                  value={sessionSubTitle}
+                  onChange={(event) => setSessionSubTitle(event.target.value)}
+                />
               ) : (
                 <h2 className={styles.subtitle}>{sessionSubTitle}</h2>
               )}
@@ -267,7 +250,7 @@ const SessionPage = ({
             {!sessionIsPublished && isOwner ? (
               <button
                 onClick={handleDiscordPublish}
-                style={{ gridColumn: "7/8", marginTop: "2rem" }}
+                style={{ gridColumn: "1/8", marginTop: "2rem" }}
               >
                 Publish to discord
               </button>
